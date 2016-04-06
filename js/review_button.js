@@ -5,7 +5,7 @@ function uVote(post_id){
     alert(post_id);
     item = document.getElementById(post_id+"upvote");
     var upload = {"username":checkCookie()};
-    $.post("http://localhost:3000/posts/"+post_id+"/upvote", upload, function(data){
+    $.post("/posts/"+post_id+"/upvote", upload, function(data){
         var result = JSON.parse(data);
         if(result.result == "0"){
             alert("Can not vote more than once!");
@@ -25,7 +25,7 @@ function dVote(post_id){
     alert(post_id);
     item = document.getElementById(post_id+"downvote");
     var upload = {"username":checkCookie()};
-    $.post("http://localhost:3000/posts/"+post_id+"/downvote", function(data){
+    $.post("/posts/"+post_id+"/downvote", function(data){
         var result = JSON.parse(data);
         if(result.result == "0"){
             alert("Can not vote more than once!");
@@ -44,7 +44,7 @@ function comment(ele, item){
     var upload = {"username":checkCookie()};
     if(upload.username !== null){
         
-        $.post("http://localhost:3000/posts/"+ele+"/comments", function(data){
+        $.post("/posts/"+ele+"/comments", function(data){
             //alert("here2");
             var result = JSON.parse(data);
             //alert(result.result.length);
@@ -140,7 +140,7 @@ function comment(ele, item){
 
             var send_to_server = {"author":checkCookie(), "text": new_input, "post_type": JSON.stringify(["reply"]), "reply_to": ele , "topics": JSON.stringify([])};
             //alert("here");
-            $.post("http://localhost:3000/p", send_to_server,function(data){
+            $.post("/p", send_to_server,function(data){
                 //alert("yes");
                 var result = JSON.parse(data);
                 alert(result.result);
