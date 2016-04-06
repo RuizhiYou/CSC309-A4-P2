@@ -394,7 +394,7 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 				if (obj['ops'][0].type == 'reply'){
 					postsCol.update({_id:ObjectId(obj['ops'][0].reply_to)}, {$push: {replies: obj['ops'][0]._id.valueOf()}});
 					usersCol.update({'username': author}, {$push: {replies: obj['ops'][0]._id.valueOf()}});
-					res.end(obj['ops'][0]._id.valueOf());
+					//res.end(obj['ops'][0]._id.valueOf());
 				} else if (obj['ops'][0].type == 'question'){
 					usersCol.update({'username': author}, {$push: {questions: obj['ops'][0]._id.valueOf()}});
 				} else if (obj['ops'][0].type == 'review'){
