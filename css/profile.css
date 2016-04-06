@@ -134,6 +134,58 @@ input[type="submit"]{
   font-size: 17px;
 }
 
+.word_title{
+  width: 300px;
+margin-left: 50px;
+  display: inline;
+
+}
+
+.word{
+  width: 500px;
+
+  display: inline;
+
+}
+
+.inputs {
+  display: block;
+  width: 300px;
+  height: 35px;
+  margin: 15px auto;
+  background: #ffffff;
+  color: rgb(0, 0, 0);
+  border: 0px;
+  padding: 5px;
+  font-size: 16px;
+  border: 2px solid rgb(91, 184, 255);
+  border-radius: 5px;
+
+ }
 
 
+#save{
+  display: block;
+  background: rgb(91, 184, 255);
+  width: 300px;
+  padding: 12px;
+  cursor: pointer;
+  color: #fff;
+  border: 0px;
+  margin: auto;
+  border-radius: 5px;
+  font-size: 17px;
+}
 
+#reset_password_confirm{
+  display: block;
+  background: rgb(91, 184, 255);
+  width: 300px;
+  padding: 12px;
+  cursor: pointer;
+  color: #fff;
+  border: 0px;
+  margin: auto;
+  border-radius: 5px;
+  font-size: 17px;
+}

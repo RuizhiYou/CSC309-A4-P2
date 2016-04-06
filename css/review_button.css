@@ -1,12 +1,12 @@
 
-#Input_Box{
+.Input_Box{
     display: none; 
 }
 .Input_Box {    
 
     width: 600px;     
     height: 160px;     
-    border: 1px solid #ccc;     
+    border: 1px solid silver;     
     transition: border linear .2s, box-shadow linear .5s;    
     -moz-transition: border linear .2s, -moz-box-shadow linear .5s;     
     -webkit-transition: border linear .2s, -webkit-box-shadow linear .5s;     
@@ -25,16 +25,16 @@
     height: 111px;     
     padding: 5px;     
     outline: none;     
-    border: 0px solid #fff;     
+    border: 0px solid silver;     
     resize: none;     
-    font: 13px "微软雅黑", Arial, Helvetica, sans-serif; 
+    font: 13px  Arial, Helvetica, sans-serif; 
     -moz-border-radius: 5px;     
     -webkit-border-radius: 5px;     
     border-radius: 5px;     
 }     
 
 .Input_Box:active{
-    border: 2px solid #33ccff;    
+    border: 2px solid silver;    
 }
 .Input_Box:hover{
     border: 1px solid rgb(91, 184, 255); 
@@ -69,7 +69,7 @@
 }     
 .postBtn {     
     float: right;     
-    font: 13px "微软雅黑", Arial, Helvetica, sans-serif;     
+    font: 13px  Arial, Helvetica, sans-serif;     
     color: #808080;     
     padding: 9px 20px 7px 20px;     
     border-left: 1px solid #ccc;     
@@ -115,7 +115,7 @@
 
 /*<!----=====================This is the part for button =======START==============================---->*/
 
-#Input_Box{
+.Input_Box{
     display: none; 
 }
 .Input_Box {    
@@ -143,7 +143,7 @@
     outline: none;     
     border: 0px solid #fff;     
     resize: none;     
-    font: 13px "微软雅黑", Arial, Helvetica, sans-serif; 
+    font: 13px , Arial, Helvetica, sans-serif; 
     -moz-border-radius: 5px;     
     -webkit-border-radius: 5px;     
     border-radius: 5px;     
@@ -153,8 +153,8 @@
     border: 2px solid #33ccff;    
 }
 .Input_Box:hover{
-    border: 1px solid rgb(91, 184, 255); 
-    box-shadow:1px 0px 2px 3px rgb(91, 184, 255);
+    /*border: 1px solid rgb(91, 184, 255); */
+    box-shadow:1px 0px 2px 3px silver;
     background: white; 
 }
 .Input_Foot {     
@@ -185,7 +185,7 @@
 }     
 .postBtn {     
     float: right;     
-    font: 13px "微软雅黑", Arial, Helvetica, sans-serif;     
+    font: 13px Arial, Helvetica, sans-serif;     
     color: #808080;     
     padding: 9px 20px 7px 20px;     
     border-left: 1px solid #ccc;     
@@ -261,10 +261,10 @@ background: url('bkg.jpg');  /*Src: http://subtlepatterns.com/retina-wood/*/
 }
 
 label {  display: block;  
-    margin: -22px 220px auto;  
-    width: 160px;  
+    margin: -19px 210px auto;  
+    width: 153px;  
     height: 20px;  
-   /* background: rgb(91, 184, 255);*/
+    /*background: rgb(91, 184, 255);*/
     color: #fff;  
     text-align: center;  
     font: 10px/20px Helvetica, Verdana, sans-serif; 
@@ -273,7 +273,7 @@ label {  display: block;
 /*label:hover {  
     background: #444;  cursor: pointer; 
 } */ 
-input#toggle {   
+#toggle:checked {   
     position: relative;   
     top: -9999px;   
     left: -9999px; 
@@ -328,18 +328,18 @@ input#toggle {
 
 .modal:active{
 
-    border: 2px solid #33ccff;    
+    border: 2px solid silver;    
 }
 .modal:hover{
 
 }
 
 
-input#toggle:checked + .modal {
-    opacity: 1;  
-    z-index: 1; 
+.modal {
+    opacity: 1;
+    z-index: 1;
 }
-input#toggle:checked + .Input_Box{
+.Input_Box{
     opacity: 1;  
     z-index: 1; 
 }
@@ -356,16 +356,18 @@ input#toggle:checked + .Input_Box{
     } 
 }
 
-#new_cc {
+.new_cc {
     max-width: 600;
     word-wrap: break-word;
     text-overflow:hidden;
 }
 
-#new_cc p{
-    line-height: 110%;
+.new_cc p{
+    line-height: 120%;
 
 }
+
+
 
 
 /*<!----=====================This is the part for button =======END==============================---->*/

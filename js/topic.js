@@ -1,5 +1,6 @@
+//ID used for recognition. Use this to retrive a specifc post information
 var topic_id = document.getElementById("recognition_tag").getAttribute("value");
-
+//Get the information of this topic
 $.post("/topics/"+
     topic_id,
     function(data,status){

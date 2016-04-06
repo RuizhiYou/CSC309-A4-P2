@@ -2,18 +2,207 @@
 <head>
 <title>user page</title>
 		<link rel="stylesheet" type="style/css" href="/profile.css" /> 
-		<script src="https://cdn.ckeditor.com/4.5.7/standard/ckeditor.js"></script>
+		<script src="http://cdn.ckeditor.com/4.5.7/standard/ckeditor.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 		<link rel="stylesheet" type="style/css" href="/navbar.css" /> 
 		<script src="/cookie.js"></script>
 
 	<script>
 	$(document).ready(function(){
+	    var user_id = document.getElementById("recognition_tag").getAttribute("value");
+	    document.getElementById("user_id").innerHTML = String(user_id);
+		var edit_clicked = false;
+		var reset_clicked = false;
+
+		var edit = document.createElement("input");
+        edit.type = "submit";
+        edit.id = "edit";
+        edit.value = "edit";
+		document.getElementById("edit_button_area").appendChild(edit);
+
+		var reset_password = document.createElement("input");
+        reset_password.type = "submit";
+        reset_password.id = "reset_password";
+     	reset_password.value = "reset password?";
+		document.getElementById("change_area").appendChild(reset_password);	
+		var save = document.createElement("input");
+        save.type = "submit";
+        save.id = "save";
+        save.value = "save";
+	    var linebreak = document.createElement("br");
+	    var linebreak1 = document.createElement("br");
+	    var linebreak2 = document.createElement("br");
+	    var linebreak3 = document.createElement("br");
+	    var linebreak4 = document.createElement("br");
+	    var linebreak5 = document.createElement("br");
+		    
+
+        var reset_password_button = $("#reset_password");
+		reset_password_button.click(function(){
+			var login_user = checkCookie();
+			if (reset_clicked == false && login_user == user_id){
+				reset_clicked = true;
+
+				if (edit_clicked == true){
+					edit_clicked = false;
+
+					var area = document.getElementById("topic_info");
+					var location = document.getElementById("edit_location_");
+					area.removeChild(location);
+					var occupation = document.getElementById("edit_occupation_");
+					area.removeChild(occupation);						
+					var hobby = document.getElementById("edit_hobby_");
+					area.removeChild(hobby);						
+					var signiture = document.getElementById("edit_signiture_");
+					area.removeChild(signiture);
+					var save = document.getElementById("save");
+					area.removeChild(save);			
+				}
+	    		var edit_old_password_ = document.createElement("input");
+                edit_old_password_.type = "text";
+                edit_old_password_.className = "inputs";
+                edit_old_password_.id = "edit_old_password_";
+                edit_old_password_.placeholder = 'input old password...';
+    			document.getElementById("topic_info").appendChild(edit_old_password_);
+
+	    		var edit_new_password_ = document.createElement("input");
+                edit_new_password_.type = "text";
+                edit_new_password_.className = "inputs";	             
+                edit_new_password_.id = "edit_new_password_";
+                edit_new_password_.placeholder = 'input new password...';
+
+				var reset_password_confirm = document.createElement("input");
+		        reset_password_confirm.type = "submit";
+		        reset_password_confirm.id = "reset_password_confirm";
+		     	reset_password_confirm.value = "reset confirm";
+		     			    			document.getElementById("topic_info").appendChild(edit_new_password_);
+
+				document.getElementById("topic_info").appendChild(reset_password_confirm);
+
+				var reset_confirm = $("#reset_password_confirm");
+				reset_confirm.click(function(){
+
+
+
+					var old_password = $('#edit_old_password_').val();
+					var new_password = $('#edit_new_password_').val();
+					$.post("http://localhost:3000/" + user_id + "/reset", {'old_password': old_password, 'new_password': new_password, 'author':checkCookie()}, function(data,status){
+							if (data == 'success'){
+								alert('password reset successfully');
+							}
+							else{
+								alert('wrong password, reset again?');
+							}
+
+					});
+				
+				});
+			}
+
+		});
+
+        var edit_button = $("#edit");
+		edit_button.click(function(){
+			var login_user = checkCookie();
+			if (edit_clicked == false && login_user == user_id){
+				// add save button
+				edit_clicked = true;
+
+				if (reset_clicked == true){
+					reset_clicked = false;
+					var area = document.getElementById("topic_info");
+					var old_password = document.getElementById("edit_old_password_");	
+					area.removeChild(old_password);
+					var new_password = document.getElementById("edit_new_password_");	
+					area.removeChild(new_password);					
+					var reset = document.getElementById("reset_password_confirm");	
+					area.removeChild(reset);				
+				}
+
+
+	    		
+	    		// add the input text
+	    		var edit_location_ = document.createElement("input");
+                edit_location_.type = "text";
+                edit_location_.id = "edit_location_";
+               	edit_location_.className = 'inputs';
+                edit_location_.placeholder = 'input new location...';
+    			document.getElementById("topic_info").appendChild(edit_location_);
+
+
+
+	    
+	    		var edit_occupation_ = document.createElement("input");
+                edit_occupation_.type = "text";
+               	edit_occupation_.className = 'inputs';
+                edit_occupation_.id = "edit_occupation_";
+                edit_occupation_.placeholder = 'input new occupation...';
+    			document.getElementById("topic_info").appendChild(edit_occupation_);
+
+	    		var edit_hobby_ = document.createElement("input");
+                edit_hobby_.type = "text";
+                edit_hobby_.id = "edit_hobby_";
+                edit_hobby_.className = 'inputs';
+                edit_hobby_.placeholder = 'input new hobby...';
+    			document.getElementById("topic_info").appendChild(edit_hobby_);
+
+	    		var edit_signiture_ = document.createElement("input");
+                edit_signiture_.type = "text";
+                edit_signiture_.id = "edit_signiture_";
+                edit_signiture_.className = 'inputs';
+                edit_signiture_.placeholder = 'input new signiture...';
+    			document.getElementById("topic_info").appendChild(edit_signiture_);
+    			document.getElementById("topic_info").appendChild(save);
+				
+				var save_button = $("#save");
+				save_button.click(function(){
+					alert("save");
+					var new_info = [];
+					if ($('#edit_location_').val()){
+						var location = $('#edit_location_').val();
+						new_info.push(location);
+					}
+					else{
+						new_info.push('not set');
+
+					}
+					if ($('#edit_occupation_').val()){
+						var occupation = $('#edit_occupation_').val();
+						new_info.push(occupation);
+					}
+					else{
+						new_info.push('not set');
+					}
+					if ($('#edit_hobby_').val()){
+						var hobby = $('#edit_hobby_').val();
+						new_info.push(hobby);
+					}
+					else{
+						new_info.push('not set');
+
+					}
+					if ($('#edit_signiture_').val()){
+						var signiture = $('#edit_signiture_').val();
+						new_info.push(signiture);
+					}
+					else{
+						new_info.push('not set');
+
+					}
+					for (var i in new_info){
+						alert(new_info[i]);
+					}
+
+			        $.post("http://localhost:3000/" + user_id + "/save", {'location': new_info[0], 'occupation': new_info[1], 'hobby': new_info[2], 'signiture':new_info[3], 'author':checkCookie()}, function(data,status){});
+					
+		    	});		        
+			}
+    	});
+
 
 	    var questions = $("#questions");
 	    questions.click(function(){
-	    	var user_id = document.getElementById("user_id").innerHTML;
-	    	var url = "/" + user_id + "/questions";
+	    	var url = "http://localhost:3000/" + user_id + "/questions";
 	    	alert(url);
 			$.get(url,function(data,status){
 	      		document.getElementById("topic_info").innerHTML = data;
@@ -22,8 +211,7 @@
 
 	    var answers = $("#answers");
 	    answers.click(function(){
-	    	var user_id = document.getElementById("user_id").innerHTML;
-	    	var url = "/" + user_id + "/answers";
+	    	var url = "http://localhost:3000/" + user_id + "/answers";
 	    	alert(url);
 			$.get(url,function(data,status){
 	      		document.getElementById("topic_info").innerHTML = data;
@@ -32,8 +220,7 @@
 
 	    var followers = $("#followers");
 	    followers.click(function(){
-	    	var user_id = document.getElementById("user_id").innerHTML;
-	    	var url = "/" + user_id + "/followers";
+	    	var url = "http://localhost:3000/" + user_id + "/followers";
 	    	alert(url);
 			$.get(url,function(data,status){
 	      		document.getElementById("topic_info").innerHTML = data;
@@ -42,8 +229,7 @@
 
 	    var followings = $("#followings");
 	    followings.click(function(){
-	    	var user_id = document.getElementById("user_id").innerHTML;
-	    	var url = "/" + user_id + "/followings";
+	    	var url = "http://localhost:3000/" + user_id + "/followings";
 	    	alert(url);
 			$.get(url,function(data,status){
 	      		document.getElementById("topic_info").innerHTML = data;
@@ -53,7 +239,6 @@
 	    var topics = $("#topics");
 	    var topic_check = false;
 	    topics.click(function(){
-	    	var user_id = document.getElementById("user_id").innerHTML;
 	    	// get the username
 	    	var cookie = document.cookie;
 	    	login_user = cookie.substring(9, cookie.length);
@@ -98,7 +283,7 @@
 					i++;
 				}
 
-		    	var url = "/" + user_id + "/addtopic";
+		    	var url = "http://localhost:3000/" + user_id + "/addtopic";
 		    	alert(new_topic);
 		        $.post(url, {'new topic': new_topic}, function(data,status){});
 
@@ -106,7 +291,7 @@
 
 
 
-	    	var url = "/" + user_id + "/topics";
+	    	var url = "http://localhost:3000/" + user_id + "/topics";
 	    	alert(url);
 			$.get(url,function(data,status){
 	      		document.getElementById("topic_info").innerHTML = data;
@@ -114,7 +299,6 @@
 	    	   
 	    });
 		
-		//var 
 	
 
 	});
@@ -245,8 +429,6 @@
 				draw();
 			}, 16);
 
-			var user_id = document.getElementById("recognition_tag").getAttribute('value');
-			console.log("abc" + user_id);
 /*
       		var location = 'toronto';
       		var occupation = 'student';
@@ -259,9 +441,12 @@
       		document.getElementById("signiture").innerHTML = signiture;
 
 */
+			document.getElementById("location").value = "location";
+			document.getElementById("occupation").value = "occupation";
+			document.getElementById("hobby").value = "hobby";
+			document.getElementById("signiture").value = "signiture";
 
-
-			$.post("/users/"+"test321"+"/show", function(data,status){
+			$.post("http://localhost:3000/users/"+"test321"+"/show", function(data,status){
 				// 
 	      		var information = JSON.parse(data);
 	      		//mock
@@ -269,7 +454,7 @@
 	      		var location = information.location;
 	     		var occupation = information.occupation;
 	     		var hobby = information.hobby;
-	     		var signature = information.signature;
+	     		var signiture = information.signiture;
 	     		var src = information.src;
 	     		var profile = document.createElement("img");
 
@@ -278,11 +463,17 @@
 				profile.setAttribute('height', "200");
 				profile.setAttribute('width', "200");
 
-	     		document.getElementById("user_id").innerHTML = user_id;
 	      		document.getElementById("location").innerHTML = location;
+	      		document.getElementById("location").value = location;
 	      		document.getElementById("occupation").innerHTML = occupation;
+	      		document.getElementById("occupation").value = occupation;
+
 	      		document.getElementById("hobby").innerHTML = hobby;
-	      		document.getElementById("signature").innerHTML = signature;
+	      		document.getElementById("hobby").value = hobby;
+
+	      		document.getElementById("signiture").innerHTML = signiture;
+	      		document.getElementById("signiture").value = signiture;
+
 	     		document.getElementById("src").innerHTML = src;
 	    		document.getElementById("profile").appendChild(profile);
 
@@ -295,7 +486,7 @@
 
 	<ul id="nav">
       <li>&nbsp&nbsp&nbsp</li>
-      <li><a href="/"><font color="white">TechHub</font></a></li>
+      <li><a href="http://localhost:3000/"><font color="white">TechHub</font></a></li>
       <li id="searchbar" class="navi" class="hidden">
         <input id="bar" type="text" placeholder="Search for Topic, Question or Answer..."></input><button  href="login.html" class="button" type="button">Search</button>
       </li>
@@ -345,15 +536,19 @@
 		</table>
 		<br>
    &nbsp;<span class="divcss5-F00">&nbsp;My signiture</span><br>
-    <text id="signature">
+    <text id="signiture">
     </text>
     <br>
+    <br><br>
+    <text id='edit_button_area'></text>&nbsp;<text id='save_area'></text>&nbsp;<text id='change_area'></text>&nbsp;<text id='confirm_area'></text>
+
 	</div>
 
 
     <div id="content1">
 
     </div>
+
 </div>
 
 
@@ -380,34 +575,10 @@
 <div id="r">
 <div class="recent">
 <div id="recommanded">
-<font size="6">Recent</font>
 </div>
 
-<hr style="border:1px dotted #036" />
-
-<p class="big">
-
-<strong><a class="article_title" href="https://en.wikipedia.org/wiki/Dog"></a></strong>
-</p>
-<p class="article_body">
-</p>
-
-<hr style="border:1px dotted #036" />
-
-<p class="big">
-<strong><a class="article_title" href="https://en.wikipedia.org/wiki/Dog"></a></strong>
-</p>
-<p class="article_body">
-</p>
 
 
-<hr style="border:1px dotted #036" />
-
-<p class="big">
-<strong><a class="article_title" href="https://en.wikipedia.org/wiki/Dog"></a></strong>
-</p>
-<p class="article_body">
-</p>
 </div>
 
 </div>
@@ -416,9 +587,11 @@
 <br>
 
 <script src="/navbar.js"></script>
+
 </body>
 
-<text id="recognition_tag1">y</text>
+
+
 </html>
 
 

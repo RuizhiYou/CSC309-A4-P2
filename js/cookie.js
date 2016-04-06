@@ -1,9 +1,11 @@
+//Set a cookie given name, value, and expiration date
 function setCookie(cname, cvalue, exdays) {
     var d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
     var expires = "expires="+d.toUTCString();
     document.cookie = cname + "=" + cvalue + "; " + expires;
 }
+//Get a value of a specific name from the cookie
 function getCookie(cname) {
     var name = cname + "=";
     var ca = document.cookie.split(';');
@@ -14,6 +16,7 @@ function getCookie(cname) {
     }
     return "";
 }
+//Check if a "username" cookie exists
 function checkCookie() {
     var username=getCookie("username");
     if (username!="") {
@@ -22,13 +25,14 @@ function checkCookie() {
         return null;
     }
 }
+//Sign out Google account
 function signOut() {
     var auth2 = gapi.auth2.getAuthInstance();
     auth2.signOut().then(function () {
       console.log('User signed out.');
     });
 }
-
+//Delete website cookie, including sigining out google account if exists
 function deleteCookie(){
     signOut();
     document.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC";

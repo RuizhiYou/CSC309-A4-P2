@@ -1,7 +1,10 @@
+
+
 // delarcing some global variables
 var found = '0';
 var reviews_result = [];
 var questions_result = [];
+var replies_result = [];
 var result_array = [];
 var check = false;
 
@@ -15,6 +18,8 @@ var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
 var path = require('path');
+var intersect = require('intersect');
+var async = require('async');
 
 
 var http = require('http'),
@@ -33,13 +38,12 @@ app.use('/home', express.static(path.join(__dirname, 'home')));
 app.use(bodyParser.urlencoded({extended: false}));
 
 // Connect to the db
-var port = Number(process.env.PORT || 3000);
 
 MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
   	assert.equal(null, err);
 
 	// Create the server
-	app.listen(port,function(){
+	app.listen(3000,function(){
 	  console.log("Started on PORT 3000");
 	})
 
@@ -82,7 +86,7 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 					var post = matched_posts_array[i];
 					if (post.type == 'review'){
 						reviews_result.push({'post': post.title, 'id': post._id});
-					} else {
+					} else if (post.type == 'question'){
 						questions_result.push({'post': post.title, 'id': post._id});
 				
 					}
@@ -128,9 +132,8 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 		var link = req.path.split('/')[3].trim();
 		var postsCol = db.collection('posts');
 		var usersCol = db.collection('users');
-
+		console.log(user_id);
 		if (link == 'show'){
-			var usersCol = db.collection('users');
 			var user = usersCol.find({'username': user_id}).toArray();
 			user.then(function(user){
 				var location = user[0].location;
@@ -142,6 +145,18 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 				var data = JSON.stringify({"location": location, "occupation": occupation, "hobby": hobby, "signature": signature, 'src': src});
 				console.log(data);
 				res.end(data);
+			});
+		} else if (link == 'save'){
+			usersCol.update({'username': user_id}, {$set: {'occupation': req.body.occupation, 'location': req.body.location, 'hobby': req.body.hobby, 'signature': req.body.signature}});
+		} else if (link == 'reset'){
+			var user = usersCol.findOne({"username": user_id});
+			user.then(function(user){
+				if (user.password == req.body.old_password){
+					usersCol.update({"username": user_id}, {$set: {password: req.body.new_password}});
+					res.end('success');
+				} else {
+					res.end('failure');
+				}
 			});
 		}
 	});
@@ -275,7 +290,8 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 		var user_id = req.body.username;
 		var sim = 0;
 		var topicsCol = db.collection('topicsCol');
-
+		var topic = req.body.new_topic;
+		var sim_dict = {};
 		//if a user is following tags already
 		// then get that array and insert a new element
 		user.then(function(user){
@@ -283,17 +299,30 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 			var current
 			if (topic_array.length > 0){
 				var i, j;
-				for (i = 0; i< topic_array.length; i++){
-						
-				}
+				var new_topic = topicsCol.findOne({'topic_id': topic})
+				var old_size;
+				new_topic.then(function(new_topic){
+					old_size = new_topic.followed_by.length;
+					for (i=0; i<topic_array.length; i++){
+						other_topic = topic_array[i];
+						other_topic_promise = topicsCol.findOne({'topic_id': other_topic});
+						other_topic_promise.then(function(other_topic_promise){
+							var other_topic_size = other_topic_promise.followed_by.length;
+							var common_users = intersect(new_topic.followed_by, other_topic_promise.followed_by).length;
+							var sim = common_users/Math.sqrt((old_size+1) * (other_topic_size));
+							var key1 = "sim." + other_topic;
+							var query1 = {};
+							query1[key1] = sim;
+							var key2 = "sim." + new_topic;
+							var query2 = {};
+							query2[key2] = sim;
+							topicsCol.update({'topic_id': new_topic}, {$set: query1});
+							topicsCol.update({'topic_id': other_topic}, {$set: query2});
+						});
 
+					}
 
-
-
-
-
-
-
+				});
 				topic_array.push(req.body.new_topic);
 			//if the user is not following anything, 
 			// make a new array
@@ -301,7 +330,7 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 				topic_array = [req.body.new_topic];
 			}
 			// update the users database
-			usersCol.update({username: req.body.username}, {$set: {topics: topic_array}}, {$upsert: true});
+			usersCol.update({username: req.body.username}, {$set: {topics: topic_array}}, {upsert: true});
 			// need to create/update the topics database
 			topicsCol.update({'topic_id': req.body.new_topic}, {$push: {"followed_by": req.body.username}});
 			res.end('1');
@@ -316,6 +345,7 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 		db.createCollection('posts', {strict:true}, function(err, collection){});
 		// find the posts db
 		var postsCol = db.collection('posts');
+		var usersCol = db.collection('users');
 		// find the topics db
 		db.createCollection('topicsCol', {strict:true}, function(err, collection){});
 		var topicsCol = db.collection('topicsCol');
@@ -330,7 +360,8 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 		var reply_to;
 		var replies;
 		var rating;
-		var upvotes = '0';
+		var upvotes = 0;
+		var downvotes = 0;
 		var upvoted_by = [];
 		// set ratig to -1 if its not a review
 		if (post_type_array[0] == 'review'){
@@ -356,18 +387,21 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 
 		
 		console.log("Title: " + title + "\nType: " + post_type + "\nRating: " + rating + "\nTopics: " + topics_array + "\nText: " + text.trim());
+
+
 		postsCol.insert({'title': title, 'type': post_type, 'rating': rating, 'topics': topics_array, 'text': text.trim(), 
-			'author': author, 'replies': replies, 'reply_to': reply_to, 'upvotes':upvotes, 'upvoted_by': upvoted_by}, function(err, obj){
-				if (obj.type == 'reply'){
-					postsCol.update({_id:ObjectId(doc.reply_to)}, {$push: {replies: obj._id.valueOf()}});
-					usersCol.update({'username': author}, {$push: {replies: obj._id.valueOf()}});
-					res.end(obj._id.valueOf());
-				} else if (obj.type == 'question'){
-					usersCol.update({'username': author}, {$push: {questions: obj._id.valueOf()}});
-				} else if (obj.type == 'review'){
-					usersCol.update({'username': author}, {$push: {reviews: obj._id.valueOf()}});
+			'author': author, 'replies': replies, 'reply_to': reply_to, 'upvotes':upvotes, 'upvoted_by': upvoted_by, 'downvotes': downvotes}, function(err, obj){
+				if (obj['ops'][0].type == 'reply'){
+					postsCol.update({_id:ObjectId(obj['ops'][0].reply_to)}, {$push: {replies: obj['ops'][0]._id.valueOf()}});
+					usersCol.update({'username': author}, {$push: {replies: obj['ops'][0]._id.valueOf()}});
+					res.end(obj['ops'][0]._id.valueOf());
+				} else if (obj['ops'][0].type == 'question'){
+					usersCol.update({'username': author}, {$push: {questions: obj['ops'][0]._id.valueOf()}});
+				} else if (obj['ops'][0].type == 'review'){
+					usersCol.update({'username': author}, {$push: {reviews: obj['ops'][0]._id.valueOf()}});
 				}
 
+				postsCol.update({_id: ObjectId(obj['ops'][0]._id)}, {$set: {created_at: Date(obj['ops'][0]._id.getTimestamp())}});
 		});
 		res.end('1');
 	});
@@ -393,7 +427,7 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 			if (matches.length <= 0){
 				console.log("User name = "+username+", password is "+password);
 				usersCol.insert({'username': username, 'password': password, 'topics': [], 'upvoted_post': [], 'email': email, 'location': 'Not known', 'occupation': 'Not known', 
-					'hobby': 'Not known', 'src':'Not known', 'questions':[], 'reviews':[], 'replies':[], 'following':[], 'followers':[]});
+					'hobby': 'Not known', 'signature':'Not known', 'src':'Not known', 'questions':[], 'reviews':[], 'replies':[], 'following':[], 'followers':[]});
 				res.end("1"); //success
 			} else {
 			//otherwise, return with code '0'
@@ -466,10 +500,37 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 		res.end(result);
 	});
 
+
+
+
+
+	app.get('/posts/*/*', function(req, res){
+		var post_id = req.path.split('/')[2];
+		var action = req.path.split('/')[3];
+		if (action == 'show'){
+			res.write("<div id='recognition_tag' value='"+post_id+"' ></div>");
+			fs.readFile('public/question.html', function(err, html){
+				if (err) {
+					throw err;
+					return;
+				}
+				res.write(html);
+				res.end();
+			});
+		}
+	});
+
+
+
 	app.post('/posts/*/*', function(req, res){
 		var post_id = req.path.split('/')[2];
 		var action = req.path.split('/')[3];
 		var username = req.body.username;
+		reviews_result = [];
+		questions_result = [];
+		replies_result = [];
+		result_array = [];
+		result = '';
 		usersCol = db.collection('users');
 		postsCol = db.collection('posts');
 		if (action == 'upvote'){
@@ -480,7 +541,7 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 				if (post.upvoted_by.indexOf(username) > -1){
 					res.end('0');
 				} else {
-					postsCol.update({id: ObjectId(post_id)}, {$push: {upvoted_by: username}, $set: {upvotes: JSON.stringify(parseInt(post.upvotes) + 1)}});
+					postsCol.update({_id: ObjectId(post_id)}, {$push: {upvoted_by: username}, $inc: {upvotes: 1}});
 					user_promise.then(function(user_promise){
 						var user = user_promise[0];
 						usersCol.update({'username': username}, {$push: {upvoted_post: post_id}});
@@ -496,16 +557,36 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 				if (post.upvoted_by.indexOf(username) > -1){
 					res.end('0');
 				} else {
-					postsCol.update({id: ObjectId(post_id)}, {$pull: {upvoted_by: username}, $set: {upvotes: JSON.stringify(parseInt(post.upvotes) -1)}});
-					user_promise.then(function(user_promise){
-						var user = user_promise[0];
-						usersCol.update({'username': username}, {$pull: {upvoted_post: post_id}});
-						res.end('1');
-					});
+					postsCol.update({_id: ObjectId(post_id)}, {$inc: {downvotes: 1}});
+
 				}
 			});
 		} else if (action == 'comments'){
+			var post = postsCol.findOne({_id: ObjectId(post_id)});
+			post.then(function(post){
+				var reply_ids = post.replies;
+				var i;
 
+				async.each(reply_ids, function(reply_id, callback){
+					var reply = postsCol.findOne({_id: ObjectId(reply_id)});
+					reply.then(function(reply){
+						replies_result.push(reply);
+						callback();
+					});
+				}, function(err){
+					if(err){return console.log(err);}
+					res.end(JSON.stringify({'result': replies_result}));
+				});
+			});
+
+
+
+
+		} else if (acton == 'show'){
+			var post = postsCol.findOne({_id: ObjectId(post_id)});
+			post.then(function(post){
+				res.end(JSON.stringify({'result': post}));
+			});
 		}
 
 	});
@@ -515,7 +596,3 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 
 
 });
-
-
-
-

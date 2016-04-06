@@ -1,3 +1,4 @@
+//This function will hash a given string. Used to Hash password for the security purpose
 var MD5 = function (string) {
 
    function RotateLeft(lValue, iShiftBits) {
