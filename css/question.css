@@ -1,0 +1,49 @@
+div{ 
+	word-wrap: break-word; 
+	word-break: break-all; 
+}
+body{
+	background-color: #f2f2f2;
+	font-family: "Avenir",sans-serif;
+}
+
+#canvas{
+	position:fixed;
+	top: 0;
+	left: 0;
+	z-index: -1;
+	background: rgb(247,250,252);
+}
+
+@media only screen and (min-width: 600px) and (max-width: 800px) {
+	#content{
+		margin-left: 28%;
+		width: 450px;
+	}
+}
+@media only screen and (min-width: 800px) {
+	#content{
+		margin-left: 28%;
+		width: 600px;
+	}
+}
+@media only screen and (max-width: 600px) {
+	#content{
+		margin-left: 5%;
+	}
+}
+#question{
+	border-bottom: 1px solid black;
+}
+.ava{
+	background-color: white;
+	border: 1px solid black;
+	position: relative;
+}
+.follow{
+	border-bottom: 1px solid black;
+}
+.botbar{
+	bottom: 0px;
+	position: auto;
+}
