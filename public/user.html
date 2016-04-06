@@ -5,11 +5,14 @@
 		<script src="http://cdn.ckeditor.com/4.5.7/standard/ckeditor.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 		<link rel="stylesheet" type="style/css" href="/navbar.css" /> 
+		<script src="/MD5.js"></script>
 		<script src="/cookie.js"></script>
 
 	<script>
 	$(document).ready(function(){
+
 	    var user_id = document.getElementById("recognition_tag").getAttribute("value");
+
 	    document.getElementById("user_id").innerHTML = String(user_id);
 		var edit_clicked = false;
 		var reset_clicked = false;
@@ -35,15 +38,18 @@
 	    var linebreak3 = document.createElement("br");
 	    var linebreak4 = document.createElement("br");
 	    var linebreak5 = document.createElement("br");
-		    
+
 
         var reset_password_button = $("#reset_password");
 		reset_password_button.click(function(){
 			var login_user = checkCookie();
+			alert(login_user);
 			if (reset_clicked == false && login_user == user_id){
+				alert("IN");
 				reset_clicked = true;
 
 				if (edit_clicked == true){
+					alert("IN2");
 					edit_clicked = false;
 
 					var area = document.getElementById("topic_info");
@@ -86,7 +92,10 @@
 
 					var old_password = $('#edit_old_password_').val();
 					var new_password = $('#edit_new_password_').val();
-					$.post("http://localhost:3000/" + user_id + "/reset", {'old_password': old_password, 'new_password': new_password, 'author':checkCookie()}, function(data,status){
+					old_password = MD5(old_password);
+					new_password = MD5(new_password);
+					alert('BEFORE');
+					$.post("/users/" + user_id + "/reset", {'old_password': old_password, 'new_password': new_password, 'author':checkCookie()}, function(data,status){
 							if (data == 'success'){
 								alert('password reset successfully');
 							}
@@ -104,6 +113,7 @@
         var edit_button = $("#edit");
 		edit_button.click(function(){
 			var login_user = checkCookie();
+			alert(login_user);
 			if (edit_clicked == false && login_user == user_id){
 				// add save button
 				edit_clicked = true;
@@ -129,9 +139,6 @@
                 edit_location_.placeholder = 'input new location...';
     			document.getElementById("topic_info").appendChild(edit_location_);
 
-
-
-	    
 	    		var edit_occupation_ = document.createElement("input");
                 edit_occupation_.type = "text";
                	edit_occupation_.className = 'inputs';
@@ -161,39 +168,43 @@
 					if ($('#edit_location_').val()){
 						var location = $('#edit_location_').val();
 						new_info.push(location);
+						document.getElementById("location").innerHTML = location;
+
 					}
 					else{
-						new_info.push('not set');
+						new_info.push(document.getElementById("location").value);
 
 					}
 					if ($('#edit_occupation_').val()){
 						var occupation = $('#edit_occupation_').val();
 						new_info.push(occupation);
+						document.getElementById("occupation").innerHTML = occupation;
+
 					}
 					else{
-						new_info.push('not set');
+						new_info.push(document.getElementById("occupation").value);
 					}
 					if ($('#edit_hobby_').val()){
 						var hobby = $('#edit_hobby_').val();
 						new_info.push(hobby);
+						document.getElementById("hobby").innerHTML = hobby;
 					}
 					else{
-						new_info.push('not set');
+						new_info.push(document.getElementById("hobby").value);
 
 					}
 					if ($('#edit_signiture_').val()){
 						var signiture = $('#edit_signiture_').val();
 						new_info.push(signiture);
+						document.getElementById("signiture").innerHTML = signiture;
 					}
 					else{
-						new_info.push('not set');
+						new_info.push(document.getElementById("signiture").value);
 
 					}
-					for (var i in new_info){
-						alert(new_info[i]);
-					}
+			
 
-			        $.post("http://localhost:3000/" + user_id + "/save", {'location': new_info[0], 'occupation': new_info[1], 'hobby': new_info[2], 'signiture':new_info[3], 'author':checkCookie()}, function(data,status){});
+			        $.post("http://localhost:3000/users/" + user_id + "/save", {'location': new_info[0], 'occupation': new_info[1], 'hobby': new_info[2], 'signature':new_info[3], 'author':checkCookie()}, function(data,status){});
 					
 		    	});		        
 			}
@@ -202,7 +213,7 @@
 
 	    var questions = $("#questions");
 	    questions.click(function(){
-	    	var url = "http://localhost:3000/" + user_id + "/questions";
+	    	var url = "/" + user_id + "/questions";
 	    	alert(url);
 			$.get(url,function(data,status){
 	      		document.getElementById("topic_info").innerHTML = data;
@@ -211,7 +222,7 @@
 
 	    var answers = $("#answers");
 	    answers.click(function(){
-	    	var url = "http://localhost:3000/" + user_id + "/answers";
+	    	var url = "/" + user_id + "/answers";
 	    	alert(url);
 			$.get(url,function(data,status){
 	      		document.getElementById("topic_info").innerHTML = data;
@@ -220,7 +231,7 @@
 
 	    var followers = $("#followers");
 	    followers.click(function(){
-	    	var url = "http://localhost:3000/" + user_id + "/followers";
+	    	var url = "/" + user_id + "/followers";
 	    	alert(url);
 			$.get(url,function(data,status){
 	      		document.getElementById("topic_info").innerHTML = data;
@@ -229,7 +240,7 @@
 
 	    var followings = $("#followings");
 	    followings.click(function(){
-	    	var url = "http://localhost:3000/" + user_id + "/followings";
+	    	var url = "/" + user_id + "/followings";
 	    	alert(url);
 			$.get(url,function(data,status){
 	      		document.getElementById("topic_info").innerHTML = data;
@@ -283,7 +294,7 @@
 					i++;
 				}
 
-		    	var url = "http://localhost:3000/" + user_id + "/addtopic";
+		    	var url = "/" + user_id + "/addtopic";
 		    	alert(new_topic);
 		        $.post(url, {'new topic': new_topic}, function(data,status){});
 
@@ -291,7 +302,7 @@
 
 
 
-	    	var url = "http://localhost:3000/" + user_id + "/topics";
+	    	var url = "/" + user_id + "/topics";
 	    	alert(url);
 			$.get(url,function(data,status){
 	      		document.getElementById("topic_info").innerHTML = data;
@@ -439,14 +450,12 @@
       		document.getElementById("occupation").innerHTML = occupation;
       		document.getElementById("hobby").innerHTML = hobby;
       		document.getElementById("signiture").innerHTML = signiture;
-
+	
 */
-			document.getElementById("location").value = "location";
-			document.getElementById("occupation").value = "occupation";
-			document.getElementById("hobby").value = "hobby";
-			document.getElementById("signiture").value = "signiture";
+	  		var user_id = document.getElementById("recognition_tag").getAttribute("value");
 
-			$.post("http://localhost:3000/users/"+"test321"+"/show", function(data,status){
+
+			$.post("/users/"+user_id+"/show", function(data,status){
 				// 
 	      		var information = JSON.parse(data);
 	      		//mock
@@ -454,7 +463,7 @@
 	      		var location = information.location;
 	     		var occupation = information.occupation;
 	     		var hobby = information.hobby;
-	     		var signiture = information.signiture;
+	     		var signiture = information.signature;
 	     		var src = information.src;
 	     		var profile = document.createElement("img");
 
@@ -486,14 +495,14 @@
 
 	<ul id="nav">
       <li>&nbsp&nbsp&nbsp</li>
-      <li><a href="http://localhost:3000/"><font color="white">TechHub</font></a></li>
+      <li><a href="/"><font color="white">TechHub</font></a></li>
       <li id="searchbar" class="navi" class="hidden">
         <input id="bar" type="text" placeholder="Search for Topic, Question or Answer..."></input><button  href="login.html" class="button" type="button">Search</button>
       </li>
-        <li ><a href="main.html"><font color="white">Feed</a></font></li>
-        <li ><a href="community.html"><font color="white">Community</a></font></li>
-        <li ><a href="newpost.html"><font color="white">Post</a></font></li>
-        <li ><a href="login.html"><font color="white">Login</font></a></li>
+        <li ><a href="/main.html"><font color="white">Feed</a></font></li>
+        <li ><a href="/community.html"><font color="white">Community</a></font></li>
+        <li ><a href="/newpost.html"><font color="white">Post</a></font></li>
+        <li ><a href="/login.html"><font color="white">Login</font></a></li>
 
         <li class="arrow"><a href="#nav2"><font color="white">&#10552</font></a></li>
     </ul>
