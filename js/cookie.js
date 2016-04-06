@@ -1,5 +1,6 @@
 //Set a cookie given name, value, and expiration date
 function setCookie(cname, cvalue, exdays) {
+    alert("Setting Cookie");
     var d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
     var expires = "expires="+d.toUTCString();
@@ -27,6 +28,7 @@ function checkCookie() {
 }
 //Sign out Google account
 function signOut() {
+    alert("singing Out");
     var auth2 = gapi.auth2.getAuthInstance();
     auth2.signOut().then(function () {
       console.log('User signed out.');

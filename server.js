@@ -38,12 +38,12 @@ app.use('/home', express.static(path.join(__dirname, 'home')));
 app.use(bodyParser.urlencoded({extended: false}));
 
 // Connect to the db
-
+var port = Number(process.env.PORT || 3000);
 MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
   	assert.equal(null, err);
 
 	// Create the server
-	app.listen(process.env.PORT,function(){
+	app.listen(port,function(){
 	  console.log("Started on PORT 3000");
 	})
 

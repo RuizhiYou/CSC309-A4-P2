@@ -85,10 +85,14 @@
 	        alert('Name: ' + profile.getName());
 	        alert('Image URL: ' + profile.getImageUrl());
 	        alert('Email: ' + profile.getEmail());*/
-	        setCookie("username",profile.getName(),2);
-	        $.post("/register", {username: profile.getName(), password: Math.floor(Math.random()*1000), email: Math.floor(Math.random()*1000)}, function(data){
-	 		});
-	        window.location="main.html";
+	        var name = profile.getName();
+	        while(name.includes(' ')){
+            	name = name.replace(' ','+');
+        	}
+	        setCookie("username",name,2);
+	        $.post("/register", {username: name, password: "123456", email: profile.getEmail()}, function(data){
+			});
+	        window.location="/main.html";
 	      };
 	    </script>
 		<script src="navbar.js"></script>
