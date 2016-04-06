@@ -114,9 +114,9 @@
 	        	final_container.push(text);
 	        }
 	        console.log(post_type_container);
-	        $.post("http://localhost:3000/p", {'post_type': JSON.stringify(post_type_container), 'topics': JSON.stringify(topics), 'title': post_title, 'text':text,'author':checkCookie()}, function(data,status){
+	        $.post("/p", {'post_type': JSON.stringify(post_type_container), 'topics': JSON.stringify(topics), 'title': post_title, 'text':text,'author':checkCookie()}, function(data,status){
 	        	alert("Posted");
-	        	window.location.href = 'http://localhost:3000/posts/'+data;
+	        	window.location.href = '/posts/'+data;
 	        });
 	    });
 	});
@@ -153,13 +153,13 @@
 
 		<ul id="nav">
 			<li>&nbsp&nbsp&nbsp</li>
-			<li><a href="http://localhost:3000/"><font color="white">TechHub</font></a></li>
+			<li><a href="/"><font color="white">TechHub</font></a></li>
 			<li id="searchbar">
 				<input id="bar" type="text" placeholder="Search for Topic, Question or Answer..."></input><button href="login.html" id="sub_button" class="button" type="button">Search</button>
 			</li>
-				<li><a href="http://localhost:3000/main.html"><font color="white">Feed</font></a></li>
-				<li><a href="http://localhost:3000/community.html"><font color="white">Community</font></a></li>
-        		<li ><div id='sta'><a href="http://localhost:3000/login.html"><font color="white">Login</font></a></div></li>
+				<li><a href="/main.html"><font color="white">Feed</font></a></li>
+				<li><a href="/community.html"><font color="white">Community</font></a></li>
+        		<li ><div id='sta'><a href="/login.html"><font color="white">Login</font></a></div></li>
 		</ul>
 
 		<canvas id="canvas"></canvas>
@@ -276,7 +276,7 @@
 		        content = content.replace(' ','+');
 		    }
 
-		    $.get("http://localhost:3000/search/"+
+		    $.get("/search/"+
 		    content,
 		    function(data,status){
 		    var jsondata = JSON.parse(data);

@@ -8,7 +8,7 @@ var flag = 1;
 //Execute at the begining
 // make an ajax call to your server and fetch the next 100, then update
 //some vars
-var url = "http://localhost:3000/users/"+checkCookie()+"/feed/"+page;
+var url = "/users/"+checkCookie()+"/feed/"+page;
 $.get(url, function(data){
 	data = JSON.parse(data);
 	if (data.result.length == 0){
@@ -43,7 +43,7 @@ $(window).scroll(function(){
     {
       	// make an ajax call to your server and fetch the next 100, then update
       	//some vars
-      	var url = "http://localhost:3000/users/"+checkCookie()+"/feed/"+page;
+      	var url = "/users/"+checkCookie()+"/feed/"+page;
        	$.get(url, function(data){
        		data = JSON.parse(data);
  			if (data.result.length == 0){
@@ -77,10 +77,10 @@ $(window).scroll(function(){
 
 function generator(data,type,i){
 	document.getElementById("content").innerHTML += '<div class="post"><div class="metadata">\
-	<text> New '+type+' added to Topic: <a href="http://localhost:3000/topics/'+data[i].target_topic+'">'+data[i].target_topic+'</a>, posted by <a href="http://localhost:3000/users/'+data[i].author+'/show">'+data[i].author+'</a></text>\
+	<text> New '+type+' added to Topic: <a href="/topics/'+data[i].target_topic+'">'+data[i].target_topic+'</a>, posted by <a href="/users/'+data[i].author+'/show">'+data[i].author+'</a></text>\
 	<img align="right" class="ava" src="'+data[i].src+'" alt="Mountain View" style="width:40px;height:40px;"></img>\
 	</div>\
-	<text class="title"><a href="http://localhost:3000/posts/'+data[i]._id.valueOf()+'">'+data[i].title+'</a> </text></br>\
+	<text class="title"><a href="/posts/'+data[i]._id.valueOf()+'">'+data[i].title+'</a> </text></br>\
 	<text class="cont">'+data[i].text+'</br></br></br></text>\
 	<div class="botbar"><text >\
 			<div>\

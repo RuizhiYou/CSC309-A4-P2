@@ -6,9 +6,6 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 		<link rel="stylesheet" type="style/css" href="/navbar.css" /> 
 		<script src="/cookie.js"></script>
-		<meta name="google-signin-scope" content="profile email">
-		<meta name="google-signin-client_id" content="1093471702807-eqfo5mijcvdgac90o979f70aba4c9vj6.apps.googleusercontent.com">
-		<script src="https://apis.google.com/js/platform.js" async defer></script>
 
 	<script>
 	$(document).ready(function(){
@@ -16,7 +13,7 @@
 	    var questions = $("#questions");
 	    questions.click(function(){
 	    	var user_id = document.getElementById("user_id").innerHTML;
-	    	var url = "http://localhost:3000/" + user_id + "/questions";
+	    	var url = "/" + user_id + "/questions";
 	    	alert(url);
 			$.get(url,function(data,status){
 	      		document.getElementById("topic_info").innerHTML = data;
@@ -26,7 +23,7 @@
 	    var answers = $("#answers");
 	    answers.click(function(){
 	    	var user_id = document.getElementById("user_id").innerHTML;
-	    	var url = "http://localhost:3000/" + user_id + "/answers";
+	    	var url = "/" + user_id + "/answers";
 	    	alert(url);
 			$.get(url,function(data,status){
 	      		document.getElementById("topic_info").innerHTML = data;
@@ -36,7 +33,7 @@
 	    var followers = $("#followers");
 	    followers.click(function(){
 	    	var user_id = document.getElementById("user_id").innerHTML;
-	    	var url = "http://localhost:3000/" + user_id + "/followers";
+	    	var url = "/" + user_id + "/followers";
 	    	alert(url);
 			$.get(url,function(data,status){
 	      		document.getElementById("topic_info").innerHTML = data;
@@ -46,7 +43,7 @@
 	    var followings = $("#followings");
 	    followings.click(function(){
 	    	var user_id = document.getElementById("user_id").innerHTML;
-	    	var url = "http://localhost:3000/" + user_id + "/followings";
+	    	var url = "/" + user_id + "/followings";
 	    	alert(url);
 			$.get(url,function(data,status){
 	      		document.getElementById("topic_info").innerHTML = data;
@@ -101,7 +98,7 @@
 					i++;
 				}
 
-		    	var url = "http://localhost:3000/" + user_id + "/addtopic";
+		    	var url = "/" + user_id + "/addtopic";
 		    	alert(new_topic);
 		        $.post(url, {'new topic': new_topic}, function(data,status){});
 
@@ -109,7 +106,7 @@
 
 
 
-	    	var url = "http://localhost:3000/" + user_id + "/topics";
+	    	var url = "/" + user_id + "/topics";
 	    	alert(url);
 			$.get(url,function(data,status){
 	      		document.getElementById("topic_info").innerHTML = data;
@@ -264,7 +261,7 @@
 */
 
 
-			$.post("http://localhost:3000/users/"+"test321"+"/show", function(data,status){
+			$.post("/users/"+"test321"+"/show", function(data,status){
 				// 
 	      		var information = JSON.parse(data);
 	      		//mock
@@ -298,7 +295,7 @@
 
 	<ul id="nav">
       <li>&nbsp&nbsp&nbsp</li>
-      <li><a href="http://localhost:3000/"><font color="white">TechHub</font></a></li>
+      <li><a href="/"><font color="white">TechHub</font></a></li>
       <li id="searchbar" class="navi" class="hidden">
         <input id="bar" type="text" placeholder="Search for Topic, Question or Answer..."></input><button  href="login.html" class="button" type="button">Search</button>
       </li>
@@ -419,7 +416,6 @@
 <br>
 
 <script src="/navbar.js"></script>
-<div class="g-signin2" style="display: none"data-onsuccess="onSignIn"></div>
 </body>
 
 <text id="recognition_tag1">y</text>

@@ -30,10 +30,10 @@
       <li id="searchbar" class="navi" class="hidden">
         <input id="bar" type="text" placeholder="Search for Topic, Question or Answer..."></input><button  href="login.html" class="button" type="button">Search</button>
       </li>
-        <li ><a href="http://localhost:3000/main.html"><font color="white">Feed</a></font></li>
-        <li  ><a href="http://localhost:3000/community.html"><font color="white">Community</a></font></li>
-        <li ><a href="http://localhost:3000/newpost.html"><font color="white">Post</a></font></li>
-        <li ><a href="http://localhost:3000/login.html"><font color="white">Login</font></a></li>
+        <li ><a href="/main.html"><font color="white">Feed</a></font></li>
+        <li  ><a href="/community.html"><font color="white">Community</a></font></li>
+        <li ><a href="/newpost.html"><font color="white">Post</a></font></li>
+        <li ><a href="/login.html"><font color="white">Login</font></a></li>
 
         <li class="arrow"><a href="#nav2"><font color="white">&#10552</font></a></li>
     </ul>
@@ -138,13 +138,13 @@
 				return;
 			}
 			//var data = {username, password, email];
-	 		$.post("http://localhost:3000/register", {username: username, password: password, email: email}, function(data){
+	 		$.post("/register", {username: username, password: password, email: email}, function(data){
 	 			if (data == '0'){
 	 				//do something
 	 				document.getElementById('username').innerHTML = "USERNAME EXISTS!!!!!!!!";
 	 			} else {
 	 				setCookie("username",username, 2);
-	 				window.location = "http://localhost:3000/main.html";
+	 				window.location = "/main.html";
 	 			}
 	 		});
 		}

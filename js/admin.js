@@ -1,5 +1,5 @@
 function getusers(){
-	$.get("http://localhost:3000/getusers", function(data){
+	$.get("/getusers", function(data){
 		data = JSON.parse(data);
 		data = data.result;
 		for (var i in data){
@@ -16,7 +16,7 @@ function initialize(){
 
 }
 function getposts(){
-	$.get("http://localhost:3000/getposts", function(data){
+	$.get("/getposts", function(data){
 		data = JSON.parse(data);
 		data = data.result;
 		for (var i in data){
@@ -30,19 +30,19 @@ function getposts(){
 	}
 }
 function deletepost(id){
-	$.get("http://localhost:3000/admin/deletepost"+id,function(data)){
+	$.get("/admin/deletepost"+id,function(data)){
 		alert("success!");
 	}
 }
 function modifypost(id){
-	$.post("http://localhost:3000/admin/modifypost/"+id,{"title":document.getElementById(id+'t').innerHTML,"content":document.getElementById(id+"c").innerHTML});
+	$.post("/admin/modifypost/"+id,{"title":document.getElementById(id+'t').innerHTML,"content":document.getElementById(id+"c").innerHTML});
 }
 
 function deleteuser(id){
-	$.get("http://localhost:3000/admin/deleteuser"+id,function(data)){
+	$.get("/admin/deleteuser"+id,function(data)){
 		alert("success!");
 	}
 }
 function modifyuser(id){
-	$.post("http://localhost:3000/admin/modifyuser/"+id,{"username":document.getElementById(id+'u').innerHTML,"password":document.getElementById(id+"p").innerHTML});
+	$.post("/admin/modifyuser/"+id,{"username":document.getElementById(id+'u').innerHTML,"password":document.getElementById(id+"p").innerHTML});
 }

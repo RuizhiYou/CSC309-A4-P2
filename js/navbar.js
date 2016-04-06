@@ -18,7 +18,7 @@ $(document).ready(function(){
             content = content.replace(' ','+');
         }
 
-        $.get("http://localhost:3000/search/"+
+        $.get("/search/"+
         content,
         function(data,status){
             //alert("Data: " + data + "\nStatus: " + status);
@@ -77,13 +77,13 @@ document.getElementById("bar").oninput=function(){
     content = content.replace(' ','+');
     }
 
-    $.get("http://localhost:3000/search/"+
+    $.get("/search/"+
     content,
     function(data,status){
     //alert("Data: " + data + "\nStatus: " + status);
     var jsondata = JSON.parse(data);
     if (jsondata.found != "0"){
-        var url = 'http://localhost:3000/topics/'+jsondata.found;
+        var url = '/topics/'+jsondata.found;
         document.getElementById("TopicTitle").innerHTML += ("<a href=' "+url+"'>"+jsondata.found+"</a>");
     }
     else{
@@ -91,7 +91,7 @@ document.getElementById("bar").oninput=function(){
     }
     if (jsondata.questions.length){
         for (var i in jsondata.question){
-            var url = 'http://localhost:3000/posts/'+jsondata.questions[i].id;
+            var url = '/posts/'+jsondata.questions[i].id;
             document.getElementById("QuestionTitle").innerHTML += ("<a href='"+url+"' id="+jsondata.questions[i].id+">   "+jsondata.questions[i].post+"</a>");
         }
     }
@@ -100,7 +100,7 @@ document.getElementById("bar").oninput=function(){
     }
     if (jsondata.reviews.length){
         for (var i in jsondata.reviews){
-            var url = 'http://localhost:3000/posts/'+jsondata.reviews[i].id;
+            var url = '/posts/'+jsondata.reviews[i].id;
             document.getElementById("ArticleTitle").innerHTML += ("<a href='"+url+"' id="+jsondata.reviews[i].id+">   "+jsondata.reviews[i].post+"</a>");
         }
     }
