@@ -43,7 +43,7 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
   	assert.equal(null, err);
 
 	// Create the server
-	app.listen(3000,function(){
+	app.listen(process.env.PORT,function(){
 	  console.log("Started on PORT 3000");
 	})
 
