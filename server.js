@@ -429,16 +429,14 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 				if (obj['ops'][0].type == 'reply'){
 					postsCol.update({_id:ObjectId(obj['ops'][0].reply_to)}, {$push: {replies: obj['ops'][0]._id.valueOf()}});
 					usersCol.update({'username': author}, {$push: {replies: obj['ops'][0]._id.valueOf()}});
-					res.end(obj['ops'][0]._id.valueOf());
 				} else if (obj['ops'][0].type == 'question'){
 					usersCol.update({'username': author}, {$push: {questions: obj['ops'][0]._id.valueOf()}});
 				} else if (obj['ops'][0].type == 'review'){
 					usersCol.update({'username': author}, {$push: {reviews: obj['ops'][0]._id.valueOf()}});
 				}
-
+				res.end(JSON.stringify({'post_id': obj['ops'][0]._id.valueOf()}));
 				postsCol.update({_id: ObjectId(obj['ops'][0]._id)}, {$set: {created_at: Date(obj['ops'][0]._id.getTimestamp())}});
 		});
-		res.end('1');
 	});
 
 
@@ -624,7 +622,7 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 
 
 
-		} else if (acton == 'show'){
+		} else if (action == 'show'){
 			console.log("IN2");
 			var post = postsCol.findOne({_id: ObjectId(post_id)});
 			post.then(function(post){

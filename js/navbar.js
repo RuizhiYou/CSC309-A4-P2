@@ -99,7 +99,7 @@ document.getElementById("bar").oninput=function(){
     }
     if (jsondata.questions.length){
         for (var i in jsondata.questions){
-            var url = '/posts/'+jsondata.questions[i].id;
+            var url = '/posts/'+jsondata.questions[i].id+'/show';
             document.getElementById("QuestionTitle").innerHTML += ("<a href='"+url+"' id="+jsondata.questions[i].id+">   "+jsondata.questions[i].post+"</a>");
         }
     }
@@ -108,7 +108,7 @@ document.getElementById("bar").oninput=function(){
     }
     if (jsondata.reviews.length){
         for (var i in jsondata.reviews){
-            var url = '/posts/'+jsondata.reviews[i].id;
+            var url = '/posts/'+jsondata.reviews[i].id+'/show';
             document.getElementById("ArticleTitle").innerHTML += ("<a href='"+url+"' id="+jsondata.reviews[i].id+">   "+jsondata.reviews[i].post+"</a>");
         }
     }

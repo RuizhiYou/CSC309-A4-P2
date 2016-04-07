@@ -66,6 +66,7 @@
 		<div id="question">
 			<h1>Question: <text id="question_title"></text></h1>
 			<h4>Content: <text id="question_body"></text></h4>
+			<h4>Rating: <text id="question_rating"></text></h4>
 		</div>
 		<div class="follow">
 			<text> Author <a href="user.html"><text id="user_id"></text> </a></text>
@@ -75,7 +76,6 @@
 		</div>
 
 	</div>
- <text id="recognition_tag">why are dog so cute?</text>
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 		<script src="../../navbar.js"></script>
@@ -83,7 +83,8 @@
 
 </body>
 	<script>	
-		var question_id = document.getElementById("recognition_tag").innerHTML;
+		var question_id = document.getElementById("recognition_tag").getAttribute("value");
+		alert(question_id);
 
 		// mock this would be replaced after getting service's data
 /*
@@ -174,80 +175,12 @@ generate html and write the data into the space in our html
 
 		// mock is over
 
-		$.get(question_id, function(data,status){
-
-			var content = data.content;
-			//var answers = data.answers;
-			var content = JSON.parse(content);
-		
-			var content_info = document.createTextNode(content);
-			document.getElementById('question_body').appendChild(content_info);
-
-			var answers = data.answers;
-
-			answers = JSON.parse(answers);
-
-			for (var i = 0; i < answers.length; i++) {
-			    var author_id = answers[i]['author_id'];
-			  	var author_src = answers[i]['author_src'];
-			  	var answer_content = answers[i]['answer_content'];
-			  	var upvote = answers[i]['upvote'];
-			  	var downvote = answers[i]['downvote'];
-			  	var comments_length = answers[i]['comment'].length;
-
-			    var div = document.createElement('div');
-			    div.id = 'follow_' + i;
-			    div.className = 'follow';
-			    document.getElementById('content').appendChild(div);
-				
-				var newlink = document.createElement('a');
-				newlink.setAttribute('href', 'https://www.google.ca');
-			    document.getElementById(div.id).appendChild(newlink);
-				
-				// add author line
-				var author_line = document.createTextNode("Author: " + author_id);
-			    document.getElementById(div.id).appendChild(author_line);
-
-			    // add profile
-			    var profile = document.createElement('img');
-			    profile.align = 'right';
-
-				profile.className = "ava";
-			    profile.src = author_src;
-
-			    profile.alt = "Mountain View";
-			    profile.style.width = '40';
-			    profile.style.height = '40';
-			    document.getElementById(div.id).appendChild(profile);
-
-			    // add answer content
-			    var linebreak = document.createElement("br");
-			    var linebreak1 = document.createElement("br");
-			    var linebreak2 = document.createElement("br");
-			    var linebreak3 = document.createElement("br");
-
-
-				document.getElementById(div.id).appendChild(linebreak);
-				document.getElementById(div.id).appendChild(linebreak1);
-
-				var answer_content = document.createTextNode(answer_content);
-			    document.getElementById(div.id).appendChild(answer_content);
-				document.getElementById(div.id).appendChild(linebreak2);
-
-				alert('good');
-				// add upvote ...
-
-				var upvote_line = document.createTextNode('Upvote(' + upvote + '), Downvote(' + downvote + '), Comment(' + comments_length + ')');
-				//var upvote_line = 'Upvote(' + upvote + '), Downvote(' + downvote + '), Comment(' + comments_length + ')';
-				document.getElementById(div.id).appendChild(upvote_line);
-				document.getElementById(div.id).appendChild(linebreak3);
-
-
-
-
-
-			}
-
+		$.post("/posts/"+question_id+"/show", function(data,status){
+			alert(data);
+			data = JSON.parse(data).result;
+			document.getElementById("question_title").innerHTML += data.title;
+			document.getElementById("question_body").innerHTML += data.text;
+			document.getElementById("question_rating").innerHTML += data.rating;
 
 	    });
 

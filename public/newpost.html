@@ -116,7 +116,8 @@
 	        console.log(post_type_container);
 	        $.post("/p", {'post_type': JSON.stringify(post_type_container), 'topics': JSON.stringify(topics), 'title': post_title, 'text':text,'author':checkCookie()}, function(data,status){
 	        	alert("Posted");
-	        	window.location.href = '/posts/'+data;
+	        	data = JSON.parse(data);
+	        	window.location.href = '/posts/'+data.post_id+'/show';
 	        });
 	    });
 	});
