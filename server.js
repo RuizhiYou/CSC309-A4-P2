@@ -285,6 +285,9 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 			var final_result = [];
 			user.then(function(user){
 				var topics = user.topics;
+				if (topics.length <=0){
+					res.end('0');
+				}
 				async.each(topic_ids, function(topic_id, callback){
 					result = {};
 					var topic = topicsCol.findOne({'topic_id': topic_id});
