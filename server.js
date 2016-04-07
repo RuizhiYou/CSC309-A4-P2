@@ -10,7 +10,7 @@ var check = false;
 
 
 
-
+var port = Number(process.env.PORT || 3000);
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 var ObjectId = require('mongodb').ObjectID;
@@ -38,7 +38,7 @@ app.use('/home', express.static(path.join(__dirname, 'home')));
 app.use(bodyParser.urlencoded({extended: false}));
 
 // Connect to the db
-var port = Number(process.env.PORT || 3000);
+
 MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
   	assert.equal(null, err);
 
@@ -127,6 +127,7 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 
 
 
+
 	app.post('/users*', function(req, res){
 		var user_id = req.path.split('/')[2].trim();
 		var link = req.path.split('/')[3].trim();
@@ -149,12 +150,15 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 		} else if (link == 'save'){
 			usersCol.update({'username': user_id}, {$set: {'occupation': req.body.occupation, 'location': req.body.location, 'hobby': req.body.hobby, 'signature': req.body.signature}});
 		} else if (link == 'reset'){
+			console.log("IN");
 			var user = usersCol.findOne({"username": user_id});
 			user.then(function(user){
 				if (user.password == req.body.old_password){
+					console.log('IF');
 					usersCol.update({"username": user_id}, {$set: {password: req.body.new_password}});
 					res.end('success');
 				} else {
+					console.log('ELSE');
 					res.end('failure');
 				}
 			});
@@ -221,6 +225,7 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 					throw err;
 					return;
 				}
+				console.log("1234");
 				res.write(html);
 				res.end();
 			});
@@ -229,15 +234,15 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 			var questions_array = [];
 			user.then(function(user){
 				questions_array = user.questions;
-				var index;
-				for (index = 0; index < questions_array.length; index++){
-					post_id = questions_array[i];
+				async.each(questions_array, function(post_id, callback){
 					var post = postsCol.findOne({'_id':ObjectId(post_id)});
 					post.then(function(post){
 						questions_result.push(post);
+						callback();
 					});
-				}
-			res.write(JSON.stringify({'posts': questions_result}));
+				}, function(err){
+					res.end(JSON.stringify({'posts': questions_result}));
+				});
 			});
 		} else if (link == 'answers'){
 			var user = userCol.findOne({'username': user_id});
@@ -245,14 +250,15 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 			user.then(function(user){
 				replies_array = user.replies;
 				var index;
-				for (index = 0; index < replies_array.length; index++){
-					post_id = replies_array[i];
-					var post = postsCol.findOne({'_id':ObjectId(post_id)});
-					post.then(function(post){
-						replies_result.push(post);
+				async.each(replies_array, function(reply_id, callback){
+					var reply = postsCol.findOne({_id: ObjectId(reply_id)});
+					reply.then(function(reply){
+						replies_result.push(reply);
+						callback();
 					});
-				}
-			res.write(JSON.stringify({'posts': replies_result}));
+				}, function(err){
+					res.end(JSON.stringify({'posts': replies_result}));
+				});
 			});
 		} else if (link == 'followers'){
 			var user = userCol.findOne({'username': user_id});
@@ -270,6 +276,31 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 			user.then(function(user){
 				res.write(JSON.findOne({'topics': user.topics}));
 			})
+		} else if (link == 'recommend'){
+			var user = userCol.findOne({'username': user_id});
+			var final_result = [];
+			user.then(function(user){
+				var topics = user.topics;
+				async.each(topic_ids, function(topic_id, callback){
+					result = {};
+					var topic = topicsCol.findOne({'topic_id': topic_id});
+					topic.then(function(topic){
+						temp = [];
+						var keys_array = Object.keys(topic.similarity);
+						var i;
+						for (i=0; i<keys_array.length; i++){
+							var key = keys_array[i];
+							temp.push({key : topic.similarity[key]});
+						}
+						result[topic_id] = temp;
+						final_result.push(result);
+						callback();
+					});
+				}, function(err){
+					if(err){return console.log(err);}
+					res.end(JSON.stringify({'res': final_result}));
+				});				
+			});
 		}
 	});
 
@@ -394,7 +425,7 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 				if (obj['ops'][0].type == 'reply'){
 					postsCol.update({_id:ObjectId(obj['ops'][0].reply_to)}, {$push: {replies: obj['ops'][0]._id.valueOf()}});
 					usersCol.update({'username': author}, {$push: {replies: obj['ops'][0]._id.valueOf()}});
-					//res.end(obj['ops'][0]._id.valueOf());
+					res.end(obj['ops'][0]._id.valueOf());
 				} else if (obj['ops'][0].type == 'question'){
 					usersCol.update({'username': author}, {$push: {questions: obj['ops'][0]._id.valueOf()}});
 				} else if (obj['ops'][0].type == 'review'){
@@ -590,8 +621,58 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 		}
 
 	});
+	
+	//    /admin/posts
+	app.get('/admin/posts', function(req, res){
+		var postsCol = db.collection('posts');
+		all_posts = postsCol.find().toArray();
+		all_posts.then(function(all_posts){
+			res.end(JSON.stringify({'posts': all_posts}));
+		});
+	});
+	//    /admin/users
 
+	app.get('/admin/users', function(req, res){
+		var usersCol = db.collection('users');
+		all_users = usersCol.find().toArray();
+		all_users.then(function(all_users){
+			res.end(JSON.stringify({'users': all_users}));
+		});
+	});
+	//    /admin/delete/user_id
+	app.get('/admin/deleteuser/*', function(req, res){
+		var user_id = req.path.split('/')[2];
+		var usersCol = db.collection('users');
+		usersCol.remove({'username': user_id});
+	});
+	//    /admin/delete/post_id
+	app.get('/admin/deletepost/*', function(req, res){
+		var post_id = req.path.split('/')[2];
+		var postsCol = db.collection('posts');
+		postsCol.remove({'_id': ObjectId(post_id)});
+	});
+	// post
+	//    /admin/users  -> change password
 
+	app.post('/admin/modifyusers', function(req, res){
+		var usersCol = db.collection('users');
+		var user_id = req.body.user_id;
+		var new_password = req.body.password;
+		usersCol.update({'username': user_id}, {'password': new_password});
+	});
+	//    /admin/posts  -> change title/content
+	app.post('/admin/modifypost', function(req, res){
+		var postsCol = db.collection('posts');
+		var id = req.body.id;
+		var title = req.body.title;
+		var content = req.body.content;
+		postscol.update({_id: ObjectId(id)}, {'title': title, 'text': content});
+	});
+	//
+
+	app.get('/admin/init', function(res, req){
+
+	});
 
 
 

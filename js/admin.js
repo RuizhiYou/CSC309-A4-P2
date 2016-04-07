@@ -1,53 +1,56 @@
 //This function will retrive all the user information from server and display it.
 function getusers(){
-	$.get("/getusers", function(data){
+	$.get("/admin/users", function(data){
 		data = JSON.parse(data);
-		data = data.result;
+		data = data.users;
 		for (var i in data){
 			var posts = document.getElementById("users");
-			posts.innerHTML += '<div id="'+data[i].id+'">\
-						username<input type="text" value="'+data[i].username+'" id="'+data[i].id+'u'+'"></input>password<input type="text" value="'+data[i].password+'" id="'+data[i].id+'p'+'">\
-						<button onclick="deleteuser('+data[i].id+')">Delete</button>\
-						<button onclick="modifyuser('+data[i].id+')">Apply</button>\
+			posts.innerHTML += '<div id="'+data[i].username+'">\
+						username<input type="text" value="'+data[i].username+'" id="'+data[i].username+'u'+'"></input>password<input type="text" value="'+data[i].password+'" id="'+data[i].username+'p'+'">\
+						<button onclick="deleteuser(\''+data[i].username+'\')">Delete</button>\
+						<button onclick="modifyuser('+data[i].username+')">Apply</button>\
 					</div>';
 		}
-	}
+	});
 }
 function initialize(){
-
+	$.get("/admin/init",function(data){
+		alert("success!");
+	});
 }
 //This function will retrive all the posts information from server and display it.
 function getposts(){
-	$.get("/getposts", function(data){
+	$.get("/admin/posts", function(data){
 		data = JSON.parse(data);
-		data = data.result;
+		data = data.posts;
 		for (var i in data){
 			var posts = document.getElementById("posts");
-			posts.innerHTML += '<div id="'+data[i].id+'">\
-						title<input type="text" value="'+data[i].title+'" id="'+data[i].id+'t'+'"></input>content<input type="text" value="'+data[i].content+'" id="'+data[i].id+'c'+'">\
-						<button onclick="deletepost('+data[i].id+')">Delete</button>\
-						<button onclick="modifypost('+data[i].id+')">Apply</button>\
+			posts.innerHTML += '<div id="'+data[i]._id.valueOf()+'">\
+						title<input type="text" value="'+data[i].title+'" id="'+data[i]._id.valueOf()+'t'+'"></input>content<input type="text" value="'+data[i].text+'" id="'+data[i]._id.valueOf()+'c'+'">\
+						<button onclick="deletepost('+data[i]._id.valueOf()+')">Delete</button>\
+						<button onclick="modifypost('+data[i]._id.valueOf()+')">Apply</button>\
 					</div>';
 		}
-	}
+	});
 }
 //This function will delete a specific post based on its id
 function deletepost(id){
-	$.get("/admin/deletepost"+id,function(data)){
+	$.get("/admin/deletepost/"+id,function(data){
 		alert("success!");
-	}
+	});
 }
 //This function update a post's information based on its id
 function modifypost(id){
-	$.post("/admin/modifypost/"+id,{"title":document.getElementById(id+'t').innerHTML,"content":document.getElementById(id+"c").innerHTML});
+	$.post("/admin/modifypost/",{"id":id,"title":document.getElementById(id+'t').innerHTML,"content":document.getElementById(id+"c").innerHTML});
 }
 //This function will delete a specific user based on its id
 function deleteuser(id){
-	$.get("/admin/deleteuser"+id,function(data)){
+	alert(id);
+	$.get("/admin/deleteuser/"+id,function(data){
 		alert("success!");
-	}
+	});
 }
 //This function update a user's information based on its id
 function modifyuser(id){
-	$.post("/admin/modifyuser/"+id,{"username":document.getElementById(id+'u').innerHTML,"password":document.getElementById(id+"p").innerHTML});
+	$.post("/admin/modifyuser/",{"id":id, "username":document.getElementById(id+'u').innerHTML,"password":document.getElementById(id+"p").innerHTML});
 }

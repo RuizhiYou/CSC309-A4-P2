@@ -91,3 +91,6 @@ body{
 	background-color: #f1f1f1;
 	border: 2px solid black;
 }
+#rating_button{
+	padding-left: 60%;
+}
