@@ -3,7 +3,7 @@
 var user_id = checkCookie();
  //user_id = document.getElementById("recognition_tag").getAttribute("value");
 
-$.get("http://localhost:3000/users/" + user_id + '/recommend', function(data,status){
+$.get("/users/" + user_id + '/recommend', function(data,status){
 
 var similarity = data;
 	similarity = JSON.parse(similarity);
