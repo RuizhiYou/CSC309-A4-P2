@@ -5,9 +5,8 @@
 		<script src="http://cdn.ckeditor.com/4.5.7/standard/ckeditor.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 		<link rel="stylesheet" type="style/css" href="/navbar.css" /> 
-		<script src="/MD5.js"></script>
-		<script src="/cookie.js"></script>
-
+		<script src="../../cookie.js"></script>
+		<script src="../../MD5.js"></script>
 	<script>
 	$(document).ready(function(){
 
@@ -43,15 +42,12 @@
         var reset_password_button = $("#reset_password");
 		reset_password_button.click(function(){
 			var login_user = checkCookie();
-			alert(login_user);
 			if (reset_clicked == false && login_user == user_id){
-				alert("IN");
 				reset_clicked = true;
+				document.getElementById("topic_info").innerHTML = "";
 
 				if (edit_clicked == true){
-					alert("IN2");
 					edit_clicked = false;
-
 					var area = document.getElementById("topic_info");
 					var location = document.getElementById("edit_location_");
 					area.removeChild(location);
@@ -94,8 +90,7 @@
 					var new_password = $('#edit_new_password_').val();
 					old_password = MD5(old_password);
 					new_password = MD5(new_password);
-					alert('BEFORE');
-					$.post("/users/" + user_id + "/reset", {'old_password': old_password, 'new_password': new_password, 'author':checkCookie()}, function(data,status){
+					$.post("/users/" + user_id + "/reset", {'old_password': old_password, 'new_password': new_password, 'author':checkCookie(),'session_id':checkCookieID()}, function(data,status){
 							if (data == 'success'){
 								alert('password reset successfully');
 							}
@@ -112,8 +107,8 @@
 
         var edit_button = $("#edit");
 		edit_button.click(function(){
+			document.getElementById("topic_info").innerHTML = "";
 			var login_user = checkCookie();
-			alert(login_user);
 			if (edit_clicked == false && login_user == user_id){
 				// add save button
 				edit_clicked = true;
@@ -204,7 +199,7 @@
 					}
 			
 
-			        $.post("http://localhost:3000/users/" + user_id + "/save", {'location': new_info[0], 'occupation': new_info[1], 'hobby': new_info[2], 'signature':new_info[3], 'author':checkCookie()}, function(data,status){});
+			        $.post("/users/" + user_id + "/save", {'location': new_info[0], 'occupation': new_info[1], 'hobby': new_info[2], 'signature':new_info[3], 'author':checkCookie()}, function(data,status){});
 					
 		    	});		        
 			}
@@ -213,37 +208,18 @@
 
 	    var questions = $("#questions");
 	    questions.click(function(){
-	    	var url = "/" + user_id + "/questions";
-	    	alert(url);
-			$.get(url,function(data,status){
-	      		document.getElementById("topic_info").innerHTML = data;
-	    	});
-	    });
+	    	var url = "/users/" + user_id + "/questions";
 
-	    var answers = $("#answers");
-	    answers.click(function(){
-	    	var url = "/" + user_id + "/answers";
-	    	alert(url);
-			$.get(url,function(data,status){
-	      		document.getElementById("topic_info").innerHTML = data;
-	    	});
-	    });
 
-	    var followers = $("#followers");
-	    followers.click(function(){
-	    	var url = "/" + user_id + "/followers";
-	    	alert(url);
 			$.get(url,function(data,status){
-	      		document.getElementById("topic_info").innerHTML = data;
-	    	});
-	    });
-
-	    var followings = $("#followings");
-	    followings.click(function(){
-	    	var url = "/" + user_id + "/followings";
-	    	alert(url);
-			$.get(url,function(data,status){
-	      		document.getElementById("topic_info").innerHTML = data;
+				alert(data);
+    			data = JSON.parse(data);
+    			data = data.posts;
+    			var output = ""; 
+    			for (var i=0;i<data.length;i++){
+    				output += 'Title: ' + data[i].title + '<br>Text: ' + data[i].text + '<hr>';
+    			}
+	      		document.getElementById("topic_info").innerHTML = output;
 	    	});
 	    });
 
@@ -251,62 +227,19 @@
 	    var topic_check = false;
 	    topics.click(function(){
 	    	// get the username
-	    	var cookie = document.cookie;
-	    	login_user = cookie.substring(9, cookie.length);
-	    	alert(login_user);
-	    	if (login_user == user_id){
-	    		if (topic_check == false){
-	    			topic_check = true;
-		    		// add statement
-		    		var statement = document.createTextNode("Add new topic");
-	    			document.getElementById("topic_info").appendChild(statement);
 
-		    		// add the input text
-		    		var input = document.createElement("input");
-	                input.type = "text";
-	                input.id = "new_topic";
-	                input.placeholder = "add new topic here...";
-	    			document.getElementById("topic_info").appendChild(input);
-
-	    			// add button
-	    			var button = document.createElement("input");
-	                button.type = "submit";
-	                button.id = "add_topic";
-	                button.value = "add topic";
-	    			document.getElementById("topic_info").appendChild(button);
-    			}
-
-	    	}
-
-            var add_topic = $("#add_topic");
-			add_topic.click(function(){
-
-		    	var new_topic = $("#new_topic").val();
-		    	//alert(typeof(new_topic));
-				//alert(new_topic.includes("s"));
-				var i=0;
-
-				while (i<new_topic.length){
-					alert(new_topic.substring(i, i+1));
-					if (new_topic.substring(i, i+1) ==' '){
-						new_topic = new_topic.replace(' ', '_');
-					}
-					i++;
-				}
-
-		    	var url = "/" + user_id + "/addtopic";
-		    	alert(new_topic);
-		        $.post(url, {'new topic': new_topic}, function(data,status){});
-
-	    	});
-
-
-
-	    	var url = "/" + user_id + "/topics";
+	    	var url = "/users/" + user_id + "/topics";
 	    	alert(url);
 			$.get(url,function(data,status){
-	      		document.getElementById("topic_info").innerHTML = data;
-	    	});	
+				alert(data);
+   				data = JSON.parse(data);
+    			data = data.topics;
+    			var output = "Topics: "; 
+    			for (var i=0;i<data.length;i++){
+    				output += data[i] + '<br>';
+    			}
+	      		document.getElementById("topic_info").innerHTML = output;	    	
+	      	});	
 	    	   
 	    });
 		
@@ -321,20 +254,35 @@
 	
 
 <body>
-	<form id="pop-form">
-    <div id='pop-div' style="width: 800px;" class="pop-box">  
-        <header>
-            <h3>Title</h3> 
-           </header>
-        <div class="pop-box-body">  
-            <p>  
-                Content
-            </p>  
-            <input type="button" value="close" onclick="hideDiv('pop-div');" style="float:right"/>
-        </div>  
-    </div>
-	</form>
+		<form id="pop-form">
+        <div id='pop-div' style="width: 800px;" class="pop-box">
+            <header>
+                <h3>Search...</h3>
+               </header>
+            <div class="pop-box-body">
+                <p>
+                   <h3 id="TopicTitle">Topic:</h3>
+                   <div><h3 id="QuestionTitle">Questions:</h3></div>
+                   <div><h3 id="ArticleTitle">Article:</h3></div>
+                </p>
+            </div>  
+        </div>
+    </form>
+
 	<canvas id="canvas"></canvas>
+	<script src="../../background.js"></script>
+	<ul id="nav">
+      <li>&nbsp&nbsp&nbsp</li>
+      <li><a href="/"><font color="white">TechHub</font></a></li>
+      <li id="searchbar" class="navi" class="hidden">
+      <input id="bar" type="text" placeholder="Search for Topic, Question or Answer..."></input><button  href="login.html" id="sub_button" class="button" type="button">Search</button>
+      </li>
+        <li ><a href="/main.html"><font color="white">Feed</a></font></li>
+        <li  ><a href="/community.html"><font color="white">Community</a></font></li>
+        <li ><a href="/newpost.html"><font color="white">Post</a></font></li>
+        <li ><div id='sta'><a href="/login.html" ><font color="white">Login</font></a></div></li>
+        <li class="arrow"><a href="#nav2"><font color="white">&#10552</font></a></li>
+    </ul>
 
 	<script>
 		var max_width = window.innerWidth, max_hight = window.innerHeight, NumOfPoints = 25;//initial the max width, hight and num of points in main page
@@ -455,7 +403,7 @@
 	  		var user_id = document.getElementById("recognition_tag").getAttribute("value");
 
 
-			$.post("/users/"+user_id+"/show", function(data,status){
+			$.post("http://localhost:3000/users/"+user_id+"/show", function(data,status){
 				// 
 	      		var information = JSON.parse(data);
 	      		//mock
@@ -464,7 +412,7 @@
 	     		var occupation = information.occupation;
 	     		var hobby = information.hobby;
 	     		var signiture = information.signature;
-	     		var src = information.src;
+	     		var src = "../../resource/icon1.png";
 	     		var profile = document.createElement("img");
 
 				profile.setAttribute('src', src);
@@ -493,19 +441,6 @@
 
 	</script>
 
-	<ul id="nav">
-      <li>&nbsp&nbsp&nbsp</li>
-      <li><a href="/"><font color="white">TechHub</font></a></li>
-      <li id="searchbar" class="navi" class="hidden">
-        <input id="bar" type="text" placeholder="Search for Topic, Question or Answer..."></input><button  href="login.html" class="button" type="button">Search</button>
-      </li>
-        <li ><a href="/main.html"><font color="white">Feed</a></font></li>
-        <li ><a href="/community.html"><font color="white">Community</a></font></li>
-        <li ><a href="/newpost.html"><font color="white">Post</a></font></li>
-        <li ><a href="/login.html"><font color="white">Login</font></a></li>
-
-        <li class="arrow"><a href="#nav2"><font color="white">&#10552</font></a></li>
-    </ul>
 	<div class="main">
 	<br>
 	<h3>
@@ -549,7 +484,13 @@
     </text>
     <br>
     <br><br>
-    <text id='edit_button_area'></text>&nbsp;<text id='save_area'></text>&nbsp;<text id='change_area'></text>&nbsp;<text id='confirm_area'></text>
+
+
+
+
+
+
+
 
 	</div>
 
@@ -566,11 +507,9 @@
 	</div>
 
 		<input type="submit" id="questions" name="post_content" value="My questions">
-		<input type="submit" id="answers" name="post_content" value="My answers">
-		<input type="submit" id="followers" name="post_content" value="Followers">
-		<input type="submit" id="followings" name="post_content" value="Followings">
-		<input type="submit" id="topics" name="post_content" value="Topics">
 
+		<input type="submit" id="topics" name="post_content" value="Topics">
+<text id='edit_button_area'></text>&nbsp;<text id='save_area'></text>&nbsp;<text id='change_area'></text>&nbsp;<text id='confirm_area'></text>
 	<br>
 <text id="topic_info">
 

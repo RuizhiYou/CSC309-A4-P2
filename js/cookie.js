@@ -26,6 +26,14 @@ function checkCookie() {
         return null;
     }
 }
+function checkCookieID() {
+    var username=getCookie("session_id");
+    if (username!="") {
+        return username;
+    }else{
+        return null;
+    }
+}
 //Sign out Google account
 function signOut() {
     alert("singing Out");

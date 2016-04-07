@@ -16,8 +16,9 @@
 			var password = document.getElementById("inputPW").value;
 			password = MD5(password);
 			$.post("/login", {username: username, password: password}, function(data){
-	 			if (data == '1'){
+	 			if (data != '0'){
 	 				setCookie("username",username, 2);
+	 				setCookie("session_id",data, 2);
 	 				window.location="main.html";
 	 			} else {
 	 				document.getElementById("error").innerHTML = "Login Failed. Please check your username or password";

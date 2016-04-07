@@ -154,9 +154,13 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 			var user = usersCol.findOne({"username": user_id});
 			user.then(function(user){
 				if (user.password == req.body.old_password){
-					console.log('IF');
-					usersCol.update({"username": user_id}, {$set: {password: req.body.new_password}});
-					res.end('success');
+					var d = new Date();
+    				var n = d.getTime();
+					if((req.body.session_id == user.session_id) && ((parseInt(user.session_id)-n<3600000 ))){
+						usersCol.update({"username": user_id}, {$set: {password: req.body.new_password}});
+						res.end('success');
+					}
+					
 				} else {
 					console.log('ELSE');
 					res.end('failure');
@@ -274,7 +278,7 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 		} else if (link == 'topics'){
 			var user = usersCol.findOne({'username': user_id});
 			user.then(function(user){
-				res.write(JSON.findOne({'topics': user.topics}));
+				res.end(JSON.stringify({'topics': user.topics}));
 			})
 		} else if (link == 'recommend'){
 			var user = usersCol.findOne({'username': user_id});
@@ -458,7 +462,7 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 			if (matches.length <= 0){
 				console.log("User name = "+username+", password is "+password);
 				usersCol.insert({'username': username, 'password': password, 'topics': [], 'upvoted_post': [], 'email': email, 'location': 'Not known', 'occupation': 'Not known', 
-					'hobby': 'Not known', 'signature':'Not known', 'src':'Not known', 'questions':[], 'reviews':[], 'replies':[], 'following':[], 'followers':[]});
+					'hobby': 'Not known', 'signature':'Not known', 'src':'icon1.png', 'questions':[], 'reviews':[], 'replies':[], 'following':[],'session_id':'0','followers':[]});
 				res.end("1"); //success
 			} else {
 			//otherwise, return with code '0'
@@ -482,13 +486,16 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 			// if there are no such username then
 			if (matchesArray.length <= 0){
 				// notify client 
-				console.log("HAHAHA");
 				res.end("0"); //failed
 			} else {
 			// if the username exists, check password
 				console.log(matchesArray[0].username);
 				if (matchesArray[0].password == password){
-					res.end("1"); //success
+					var d = new Date();
+    				var n = d.getTime();
+					var session_id = n;
+					usersCol.update({'username': username}, {$set: {'session_id': session_id}});
+					res.end(String(session_id)); //success
 				} else {
 					res.end("0"); //failed
 				}
@@ -526,9 +533,10 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 			for (var i=0; i<matched_posts.length; i++){
 				result_array.push(matched_posts[i]);
 			}
+			result = JSON.stringify({'result': result_array});
+			res.end(result);
 		});
-		result = JSON.stringify({'result': result_array});
-		res.end(result);
+
 	});
 
 
@@ -538,7 +546,10 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 	app.get('/posts/*/*', function(req, res){
 		var post_id = req.path.split('/')[2];
 		var action = req.path.split('/')[3];
+		console.log(post_id);
+		console.log(action);
 		if (action == 'show'){
+			console.log("IN");
 			res.write("<div id='recognition_tag' value='"+post_id+"' ></div>");
 			fs.readFile('public/question.html', function(err, html){
 				if (err) {
@@ -614,6 +625,7 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 
 
 		} else if (acton == 'show'){
+			console.log("IN2");
 			var post = postsCol.findOne({_id: ObjectId(post_id)});
 			post.then(function(post){
 				res.end(JSON.stringify({'result': post}));
@@ -659,10 +671,6 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 		var usersCol = db.collection('users');
 		var user_id = req.body.user_id;
 		var new_password = req.body.password;
-		console.log("====================");
-		console.log(user_id);
-		console.log(new_password);
-		console.log("=========================");
 		usersCol.update({'username': user_id},{$set: {'password': new_password}});
 	});
 	//    /admin/posts  -> change title/content

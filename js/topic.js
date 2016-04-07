@@ -1,14 +1,11 @@
 //ID used for recognition. Use this to retrive a specifc post information
 var topic_id = document.getElementById("recognition_tag").getAttribute("value");
 //Get the information of this topic
-$.post("/topics/"+
-    topic_id,
-    function(data,status){
+document.getElementById("topic").innerHTML += topic_id;
+$.post("/topics/"+topic_id,
+    function(data){
     	data = JSON.parse(data);
-    	document.getElementById("topic").innerHTML += topic_id;
-    	document.getElementById("rating").innerHTML += data.topic.rating;
-    	document.getElementById("description").innerHTML += data.topic.description;
-
+    	//document.getElementById("description").innerHTML += data.topic.description;
     	for (var i in data.result){
 	    	document.getElementById("content").innerHTML +=
 	    	'<div class="post">\
