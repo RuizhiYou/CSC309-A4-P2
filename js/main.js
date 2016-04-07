@@ -77,7 +77,7 @@ function generator(data,type,i){
 	document.getElementById("content").innerHTML += '<div class="post">\
 			<div class="metadata">\
 				<text> New '+type+' added to Topic:<a href="/topics/'+data[i].target_topic+'">'+data[i].target_topic+'</a>, posted by <a href="/users/'+data[i].author+'/show">'+data[i].author+'</a></text>\
-				<img align="right" class="ava" src="'+data[i].src+'" alt="Mountain View" style="width:40px;height:40px;"></img>\
+				<img align="right" class="ava" src="icon2.png" alt="Mountain View" style="width:40px;height:40px;"></img>\
 			</div>\
 		<text class="title"><a href="/posts/'+data[i]._id.valueOf()+'/show">'+data[i].title+'</a> </text></br>\
 		<text class="cont">'+data[i].text+'</br></br></br></text>\

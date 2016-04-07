@@ -1,11 +1,10 @@
+<div id='recognition_tag'></div>
+<div id='topics_followed'></div>
 <head>
    <link href="main.css" type="text/css" rel="stylesheet" />
    <link href="navbar.css" type="text/css" rel="stylesheet" />
    <script src="cookie.js"></script>
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-   <meta name="google-signin-scope" content="profile email">
-  <meta name="google-signin-client_id" content="1093471702807-eqfo5mijcvdgac90o979f70aba4c9vj6.apps.googleusercontent.com">
-  <script src="https://apis.google.com/js/platform.js" async defer></script>
 <body>
   <canvas id="canvas"></canvas>
     <form id="pop-form">
@@ -138,14 +137,14 @@
   </script>
     <ul id="nav">
       <li>&nbsp&nbsp&nbsp</li>
-      <li><a href="/"><font color="white">TechHub</font></a></li>
+      <li><a href="home.html"><font color="white">TechHub</font></a></li>
       <li id="searchbar" class="navi" class="hidden">
         <input id="bar" type="text" placeholder="Search for Topic, Question or Answer..."></input><button  href="login.html" class="button" type="button">Search</button>
       </li>
-        <li ><a href="/main.html"><font color="white">Feed</a></font></li>
-        <li  ><a href="/community.html"><font color="white">Community</a></font></li>
-        <li ><a href="/newpost.html"><font color="white">Post</a></font></li>
-        <li ><div id='sta'><a href="/login.html"><font color="white">Login</font></a></div></li>
+        <li ><a href="main.html"><font color="white">Feed</a></font></li>
+        <li  ><a href="community.html"><font color="white">Community</a></font></li>
+        <li ><a href="newpost.html"><font color="white">Post</a></font></li>
+        <li ><div id='sta'><a href="login.html"><font color="white">Login</font></a></div></li>
 
         <li class="arrow"><a href="#nav2"><font color="white">&#10552</font></a></li>
     </ul>
@@ -171,12 +170,11 @@
   <div id="content">
 
 <div id="com"><font size="6">Community</font></div>
-<hr style="border:1px dotted #036" />
-<hr style="border:1px dotted #036" />
 
 
-
+<div id='recommandation'>
 <div class="article">    
+<br>
 <font size="5">Phone Story</font>
 <br>
 <div style="width:190px; height:auto; float:left; display:inline"><img src="img/ip1.jpg" height="150" width="180"></div>  
@@ -185,11 +183,14 @@
 <br><br><br><br><br><br><br><br>
 Welcome to iPhone SE, the most powerful 4-inch phone ever. To create it, we started with a beloved design, then reinvented it from the inside out. The A9 is the same advanced chip used in iPhone 6s. The 12-megapixel camera captures incredible photos and 4K videos. And Live Photos bring your images to life. The result is an iPhone that looks small. But lives large...
 <a href="https://markus.cdf.toronto.edu/csc309-2016-01/en/assignments">details...</a>
+<br><br>
+
 </div> 
-<hr style="border:1px dotted #036" />
-<br>
+
 
 <div class="article">    
+<br>
+
 <font size="5">Camera Story</font>
 <br>
 <div style="width:190px; height:auto; float:left; display:inline"><img src="img/camera1.jpg" height="150" width="180"></div>  
@@ -198,12 +199,14 @@ Welcome to iPhone SE, the most powerful 4-inch phone ever. To create it, we star
 <br><br><br><br><br><br><br><br>
 In the earlier editions of this 'How To Use Your Camera' series, I offered some general advice about equipment, light and inspiration. Today I'm going to offer you some advice on a topic I feel is vital for anyone interested in pushing their photography further; shooting in manual mode...
 <a href="https://markus.cdf.toronto.edu/csc309-2016-01/en/assignments">details...</a>
-
+<br>
+<br>
 </div> 
-<hr style="border:1px dotted #036" />
+
+
+<div class="article">    
 <br>
 
-<div id="article">    
 <font size="5">Watch Story</font>
 <br>
 <div style="width:190px; height:auto; float:left; display:inline"><img src="img/watch1.jpg" height="150" width="180"></div>  
@@ -212,15 +215,18 @@ In the earlier editions of this 'How To Use Your Camera' series, I offered some 
 <br><br><br><br><br><br><br><br>
 The Apple Watch comes in two sizes. The case, measured vertically, is either 38mm or 42mm. Every single person who's seen the 42mm model I've been testing immediately presumed it was the smaller one - this is not an oversized watch. You begin to appreciate the classiness of Apple's latest golden child the moment you remove it from the box. Seeing it and trying it on your wrist challenges your presumptions - it's much more attractive and premium than the photos suggest...
 <a href="https://markus.cdf.toronto.edu/csc309-2016-01/en/assignments">details...</a>
+<br><br>
 
 </div> 
-<hr style="border:1px dotted #036" />
-<br>    
+
+
+
+</div> 
     
-    <div class="post">
+    <div class="post"><div class="article"><text id='recommend_area'></text></div>
     <text class="title">Load More...</text></br>
     </div>
   </div>
-    <div class="g-signin2" style="display: none"data-onsuccess="onSignIn"></div>
 <script src="navbar.js"></script>
+<script src='community.js'></script>
 </body>
