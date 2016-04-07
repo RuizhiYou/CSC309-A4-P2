@@ -8,7 +8,7 @@ function getusers(){
 			posts.innerHTML += '<div id="'+data[i].username+'">\
 						username<input type="text" value="'+data[i].username+'" id="'+data[i].username+'u'+'"></input>password<input type="text" value="'+data[i].password+'" id="'+data[i].username+'p'+'">\
 						<button onclick="deleteuser(\''+data[i].username+'\')">Delete</button>\
-						<button onclick="modifyuser('+data[i].username+')">Apply</button>\
+						<button onclick="modifyuser(\''+data[i].username+'\')">Apply</button>\
 					</div>';
 		}
 	});
@@ -27,8 +27,8 @@ function getposts(){
 			var posts = document.getElementById("posts");
 			posts.innerHTML += '<div id="'+data[i]._id.valueOf()+'">\
 						title<input type="text" value="'+data[i].title+'" id="'+data[i]._id.valueOf()+'t'+'"></input>content<input type="text" value="'+data[i].text+'" id="'+data[i]._id.valueOf()+'c'+'">\
-						<button onclick="deletepost('+data[i]._id.valueOf()+')">Delete</button>\
-						<button onclick="modifypost('+data[i]._id.valueOf()+')">Apply</button>\
+						<button onclick="deletepost(\''+data[i]._id.valueOf()+'\')">Delete</button>\
+						<button onclick="modifypost(\''+data[i]._id.valueOf()+'\')">Apply</button>\
 					</div>';
 		}
 	});
@@ -41,16 +41,19 @@ function deletepost(id){
 }
 //This function update a post's information based on its id
 function modifypost(id){
-	$.post("/admin/modifypost/",{"id":id,"title":document.getElementById(id+'t').innerHTML,"content":document.getElementById(id+"c").innerHTML});
+	alert(id);
+	$.post("/admin/modifyposts/",{"id":id,"title":document.getElementById(id+'t').value,"content":document.getElementById(id+"c").value});
 }
 //This function will delete a specific user based on its id
 function deleteuser(id){
-	alert(id);
 	$.get("/admin/deleteuser/"+id,function(data){
 		alert("success!");
 	});
 }
 //This function update a user's information based on its id
 function modifyuser(id){
-	$.post("/admin/modifyuser/",{"id":id, "username":document.getElementById(id+'u').innerHTML,"password":document.getElementById(id+"p").innerHTML});
+	var pswd = (document.getElementById(id+"p").value);
+	pswd = MD5(pswd);
+	$.post("/admin/modifyusers/",{"user_id":id,"password":pswd});
+	location.reload();
 }

@@ -245,7 +245,7 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 				});
 			});
 		} else if (link == 'answers'){
-			var user = userCol.findOne({'username': user_id});
+			var user = usersCol.findOne({'username': user_id});
 			var replies_array = [];
 			user.then(function(user){
 				replies_array = user.replies;
@@ -261,23 +261,23 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 				});
 			});
 		} else if (link == 'followers'){
-			var user = userCol.findOne({'username': user_id});
+			var user = usersCol.findOne({'username': user_id});
 			var followers_array = [];
 			user.then(function(user){
 				res.write(JSON.stringify({'followers': user.followers}));
 			});
 		} else if (link == 'followings'){
-			var user = userCol.findOne({'username': user_id});
+			var user = userCsol.findOne({'username': user_id});
 			user.then(function(user){
 				res.write(JSON.stringify({'followings': user.followings}));
 			});
 		} else if (link == 'topics'){
-			var user = userCol.findOne({'username': user_id});
+			var user = usersCol.findOne({'username': user_id});
 			user.then(function(user){
 				res.write(JSON.findOne({'topics': user.topics}));
 			})
 		} else if (link == 'recommend'){
-			var user = userCol.findOne({'username': user_id});
+			var user = usersCol.findOne({'username': user_id});
 			var final_result = [];
 			user.then(function(user){
 				var topics = user.topics;
@@ -636,18 +636,19 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 		var usersCol = db.collection('users');
 		all_users = usersCol.find().toArray();
 		all_users.then(function(all_users){
+			console.log(all_users);
 			res.end(JSON.stringify({'users': all_users}));
 		});
 	});
 	//    /admin/delete/user_id
 	app.get('/admin/deleteuser/*', function(req, res){
-		var user_id = req.path.split('/')[2];
+		var user_id = req.path.split('/')[3];
 		var usersCol = db.collection('users');
 		usersCol.remove({'username': user_id});
 	});
 	//    /admin/delete/post_id
 	app.get('/admin/deletepost/*', function(req, res){
-		var post_id = req.path.split('/')[2];
+		var post_id = req.path.split('/')[3];
 		var postsCol = db.collection('posts');
 		postsCol.remove({'_id': ObjectId(post_id)});
 	});
@@ -658,15 +659,20 @@ MongoClient.connect('mongodb://localhost:27017/test', function(err, db) {
 		var usersCol = db.collection('users');
 		var user_id = req.body.user_id;
 		var new_password = req.body.password;
-		usersCol.update({'username': user_id}, {'password': new_password});
+		console.log("====================");
+		console.log(user_id);
+		console.log(new_password);
+		console.log("=========================");
+		usersCol.update({'username': user_id},{$set: {'password': new_password}});
 	});
 	//    /admin/posts  -> change title/content
-	app.post('/admin/modifypost', function(req, res){
+	app.post('/admin/modifyposts', function(req, res){
+		console.log("modifypost");
 		var postsCol = db.collection('posts');
 		var id = req.body.id;
 		var title = req.body.title;
 		var content = req.body.content;
-		postscol.update({_id: ObjectId(id)}, {'title': title, 'text': content});
+		postsCol.update({_id: ObjectId(id)}, {$set: {'title': title, 'text': content}});
 	});
 	//
 
